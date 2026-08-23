@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResQConnect — Disaster Response &amp; Relief Management Platform</title>
+  <meta name="description" content="ResQConnect connects citizens, volunteers, NGOs, rescue teams, and administrators to coordinate disaster response and relief in real time." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===================== ALERT RIBBON ===================== -->
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul><!-- populated by main.js so the ticker isn't duplicated on every page --></ul>
+    </div>
+  </div>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo__mark">R</span>
+        ResQConnect
+      </a>
+
+      <nav id="navLinks" class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="alerts.html">Alerts</a>
+        <a href="safety.html">Safety</a>
+        <a href="relief-camps.html">Relief Camps</a>
+        <a href="contacts.html">Emergency Contacts</a>
+        <a href="donate.html">Donate</a>
+        <a href="volunteer-registration.html">Volunteer</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="alerts.html#report" class="btn btn-emergency btn-sm">Report Emergency</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== HERO ===================== -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Live disaster response network</div>
+          <h1>Coordinated relief, from first report to last delivery.</h1>
+          <p class="lede">ResQConnect brings citizens, volunteers, NGOs, and rescue teams onto one board — so a flood report in Mumbai reaches a rescue crew before the water does.</p>
+          <div class="hero-actions">
+            <a href="register.html" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="citizen-sos.html" class="btn btn-emergency btn-lg">Send SOS</a>
+          </div>
+          <div class="stat-row">
+            <div class="stat"><b data-count-to="18420">0</b><span>Citizens registered</span></div>
+            <div class="stat"><b data-count-to="3260">0</b><span>Active volunteers</span></div>
+            <div class="stat"><b data-count-to="742">0</b><span>Relief camps live</span></div>
+          </div>
+        </div>
+
+        <div class="sitrep reveal">
+          <div class="sitrep__head">
+            <span>SITUATION REPORT</span>
+            <span id="sitrepTime">Updated moments ago</span>
+          </div>
+          <div class="sitrep__list" id="sitrepList">
+            <!-- populated from ResQStore.getAll("alerts") by the page script below -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== HOW IT WORKS ===================== -->
+    <section class="section" id="how-it-works">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">How it works</div>
+          <h2>One report. Four teams. Zero confusion.</h2>
+          <p>Every report moves through the same pipeline, so nothing sits unassigned.</p>
+        </div>
+        <div class="grid grid-4">
+          <div class="card card-hover reveal">
+            <div class="stat-card__icon" style="background:var(--teal-bg);color:var(--teal);margin-bottom:12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>
+            </div>
+            <h3>1. Report</h3>
+            <p>A citizen files a disaster report or hits SOS with their location and photos.</p>
+          </div>
+          <div class="card card-hover reveal">
+            <div class="stat-card__icon" style="background:var(--amber-bg);color:#A15E00;margin-bottom:12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3>2. Verify</h3>
+            <p>Admins triage the report, assign a severity level, and route it to the right team.</p>
+          </div>
+          <div class="card card-hover reveal">
+            <div class="stat-card__icon" style="background:var(--teal-bg);color:var(--teal);margin-bottom:12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <h3>3. Respond</h3>
+            <p>Volunteers and rescue teams accept tasks and coordinate delivery or extraction.</p>
+          </div>
+          <div class="card card-hover reveal">
+            <div class="stat-card__icon" style="background:var(--green-bg);color:var(--green);margin-bottom:12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"/></svg>
+            </div>
+            <h3>4. Resolve</h3>
+            <p>NGOs log distributed resources and the case closes with a full audit trail.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FOR EVERY ROLE ===================== -->
+    <section class="section section-tight" style="background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Built for every responder</div>
+          <h2>Five roles, one shared operating picture.</h2>
+        </div>
+        <div class="grid grid-3">
+          <div class="card reveal">
+            <span class="badge badge-advisory">Citizen</span>
+            <h3 style="margin-top:12px;">Report &amp; request help</h3>
+            <p>File disaster reports, send an SOS, locate nearby relief camps, and search missing persons.</p>
+          </div>
+          <div class="card reveal">
+            <span class="badge badge-success">Volunteer</span>
+            <h3 style="margin-top:12px;">Take on tasks</h3>
+            <p>Browse available tasks by skill and location, accept them, and track your response history.</p>
+          </div>
+          <div class="card reveal">
+            <span class="badge badge-watch">NGO</span>
+            <h3 style="margin-top:12px;">Manage relief supply</h3>
+            <p>Track inventory in real time and coordinate distribution across active relief camps.</p>
+          </div>
+          <div class="card reveal">
+            <span class="badge badge-warning">Rescue Team</span>
+            <h3 style="margin-top:12px;">Run field operations</h3>
+            <p>Receive assigned cases, update status from the field, and hand off to relief once safe.</p>
+          </div>
+          <div class="card reveal">
+            <span class="badge badge-critical">Admin</span>
+            <h3 style="margin-top:12px;">Oversee the whole board</h3>
+            <p>Verify reports, manage users and camps, allocate resources, and monitor analytics.</p>
+          </div>
+          <div class="card reveal" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:10px;background:var(--teal);color:#fff;border:none;">
+            <h3 style="color:#fff;margin:0;">Ready to help?</h3>
+            <p style="color:rgba(255,255,255,0.85);">Registration takes under two minutes.</p>
+            <a href="register.html" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,0.5);color:#fff;">Create account</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== IMPACT NUMBERS ===================== -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Impact this season</div>
+          <h2>What the network moved last quarter.</h2>
+        </div>
+        <div class="grid grid-4">
+          <div class="card reveal">
+            <b class="mono" data-count-to="1284" style="font-family:var(--font-display);font-size:30px;display:block;">0</b>
+            <p style="margin-top:6px;">Disaster reports filed</p>
+          </div>
+          <div class="card reveal">
+            <b class="mono" data-count-to="96" style="font-family:var(--font-display);font-size:30px;display:block;">0</b>
+            <p style="margin-top:6px;">Relief camps active nationwide</p>
+          </div>
+          <div class="card reveal">
+            <b class="mono" data-count-to="52300" style="font-family:var(--font-display);font-size:30px;display:block;">0</b>
+            <p style="margin-top:6px;">Meals &amp; supply kits distributed</p>
+          </div>
+          <div class="card reveal">
+            <b class="mono" data-count-to="418" style="font-family:var(--font-display);font-size:30px;display:block;">0</b>
+            <p style="margin-top:6px;">Missing person cases resolved</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CTA ===================== -->
+    <section class="section-tight">
+      <div class="container">
+        <div class="card reveal" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;padding:40px;background:linear-gradient(135deg, var(--teal-bg), var(--fog));">
+          <div>
+            <h2 style="margin-bottom:6px;">In immediate danger?</h2>
+            <p style="margin:0;">Don't wait to register — SOS works without an account.</p>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="citizen-sos.html" class="btn btn-emergency btn-lg">Send Emergency SOS</a>
+            <a href="contacts.html" class="btn btn-outline btn-lg">Emergency Contacts</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color:#fff;">
+            <span class="logo__mark">R</span>
+            ResQConnect
+          </a>
+          <p>A disaster response &amp; relief management platform connecting citizens, volunteers, NGOs, rescue teams, and administrators.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="alerts.html">Disaster Alerts</a>
+          <a href="safety.html">Safety Guidelines</a>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <a href="volunteer-registration.html">Volunteer</a>
+          <a href="donate.html">Donate</a>
+          <a href="register.html">Create Account</a>
+          <a href="login.html">Log In</a>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <a href="relief-camps.html">Relief Camps</a>
+          <a href="contacts.html">Emergency Contacts</a>
+          <a href="citizen-missing.html">Missing Persons</a>
+        </div>
+        <div>
+          <h4>Roles</h4>
+          <a href="citizen-dashboard.html">Citizen</a>
+          <a href="volunteer-dashboard.html">Volunteer</a>
+          <a href="ngo-dashboard.html">NGO</a>
+          <a href="rescue-dashboard.html">Rescue Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> ResQConnect. Built for resilience.</span>
+        <span class="footer-emergency mono">Emergency Helpline: 108</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Home page — render the "Situation Report" panel from the shared
+    // mock alert data instead of a hardcoded snapshot, so it always
+    // matches the ribbon and the Alerts page.
+    document.addEventListener("DOMContentLoaded", () => {
+      const list = document.getElementById("sitrepList");
+      if (!list || !window.ResQStore) return;
+
+      const badgeClass = { critical: "badge-critical", warning: "badge-warning", watch: "badge-watch", advisory: "badge-advisory" };
+      const alerts = window.ResQStore.getAll("alerts").filter((a) => a.active).slice(0, 4);
+
+      renderCollection({
+        container: list,
+        items: alerts,
+        rowTemplate: (a) => `
+          <div class="sitrep__row">
+            <span class="id">${a.id}</span>
+            <div class="body">
+              <p>${a.location.split(",")[0]} — ${a.title} <span class="badge ${badgeClass[a.sev] || "badge-neutral"}" style="margin-left:6px;">${a.sev.toUpperCase()}</span></p>
+              <span>${a.description}</span>
+            </div>
+          </div>`,
+        emptyState: { title: "No active alerts", description: "The network is currently quiet — check back soon." }
+      });
+    });
+  </script>
+</body>
+</html>

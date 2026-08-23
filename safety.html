@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Safety Guidelines — ResQConnect</title>
+  <meta name="description" content="Safety guidelines for floods, earthquakes, cyclones, and fires." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      <nav id="navLinks" class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="alerts.html">Alerts</a>
+        <a href="safety.html">Safety</a>
+        <a href="relief-camps.html">Relief Camps</a>
+        <a href="contacts.html">Emergency Contacts</a>
+        <a href="donate.html">Donate</a>
+        <a href="volunteer-registration.html">Volunteer</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="alerts.html#report" class="btn btn-emergency btn-sm">Report Emergency</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="eyebrow">Stay prepared</div>
+        <h1>Safety Guidelines</h1>
+        <p style="max-width:560px;">Guidance reviewed against NDMA (National Disaster Management Authority) recommendations. Keep an emergency kit ready year-round.</p>
+      </div>
+    </section>
+    <section class="section-tight">
+      <div class="container grid grid-2">
+        <div class="card reveal">
+            <div class="stat-card__icon" style="background:var(--teal-bg);color:var(--teal);margin-bottom:12px;width:40px;height:40px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/></svg>
+            </div>
+            <h3>Flood</h3>
+            <ul style="margin-top:10px;"><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Move to higher ground immediately if water is rising.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Avoid walking or driving through moving water.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Turn off electricity and gas at the mains before evacuating.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Keep a battery radio for official updates.</li></ul>
+          </div>
+        <div class="card reveal">
+            <div class="stat-card__icon" style="background:var(--alert-bg);color:var(--alert);margin-bottom:12px;width:40px;height:40px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/></svg>
+            </div>
+            <h3>Earthquake</h3>
+            <ul style="margin-top:10px;"><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Drop, Cover, and Hold On — don't run outside during shaking.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Stay away from windows, mirrors, and heavy furniture.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>If outdoors, move to an open area away from buildings and poles.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>After shaking stops, check for gas leaks before using switches.</li></ul>
+          </div>
+        <div class="card reveal">
+            <div class="stat-card__icon" style="background:var(--amber-bg);color:#A15E00;margin-bottom:12px;width:40px;height:40px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/></svg>
+            </div>
+            <h3>Cyclone</h3>
+            <ul style="margin-top:10px;"><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Secure loose objects outdoors; board up windows.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Stock at least 3 days of water, food, and medicine.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Evacuate to designated relief camps if authorities advise.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Stay indoors during the 'eye' of the storm — winds will resume.</li></ul>
+          </div>
+        <div class="card reveal">
+            <div class="stat-card__icon" style="background:var(--alert-bg);color:var(--alert);margin-bottom:12px;width:40px;height:40px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/></svg>
+            </div>
+            <h3>Fire</h3>
+            <ul style="margin-top:10px;"><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Stay low to avoid smoke inhalation while evacuating.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Feel doors before opening — do not open if hot.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Never use elevators during a fire evacuation.</li><li style='padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);'>Have two escape routes planned for your home or building.</li></ul>
+          </div>
+      </div>
+    </section>
+    <section class="section" style="background:var(--panel);border-top:1px solid var(--line);">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Emergency kit</div>
+          <h2>What to pack, before you need it.</h2>
+        </div>
+        <div class="grid grid-4">
+          <div class="card reveal"><h3 style="font-size:15px;">Water &amp; food</h3><p>3 days minimum, plus a manual can opener.</p></div>
+          <div class="card reveal"><h3 style="font-size:15px;">First aid &amp; medicine</h3><p>Prescription medicines, bandages, antiseptic.</p></div>
+          <div class="card reveal"><h3 style="font-size:15px;">Documents</h3><p>ID proof, insurance papers in a waterproof pouch.</p></div>
+          <div class="card reveal"><h3 style="font-size:15px;">Power &amp; light</h3><p>Torch, power bank, spare batteries.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color:#fff;"><span class="logo__mark">R</span>ResQConnect</a>
+          <p>A disaster response &amp; relief management platform connecting citizens, volunteers, NGOs, rescue teams, and administrators.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="alerts.html">Disaster Alerts</a>
+          <a href="safety.html">Safety Guidelines</a>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <a href="volunteer-registration.html">Volunteer</a>
+          <a href="donate.html">Donate</a>
+          <a href="register.html">Create Account</a>
+          <a href="login.html">Log In</a>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <a href="relief-camps.html">Relief Camps</a>
+          <a href="contacts.html">Emergency Contacts</a>
+          <a href="citizen-missing.html">Missing Persons</a>
+        </div>
+        <div>
+          <h4>Roles</h4>
+          <a href="citizen-dashboard.html">Citizen</a>
+          <a href="volunteer-dashboard.html">Volunteer</a>
+          <a href="ngo-dashboard.html">NGO</a>
+          <a href="rescue-dashboard.html">Rescue Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> ResQConnect. Built for resilience.</span>
+        <span class="footer-emergency mono">Emergency Helpline: 108</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

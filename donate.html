@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donate — ResQConnect</title>
+  <meta name="description" content="Support disaster relief through money, supplies, or blood donation." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      <nav id="navLinks" class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="alerts.html">Alerts</a>
+        <a href="safety.html">Safety</a>
+        <a href="relief-camps.html">Relief Camps</a>
+        <a href="contacts.html">Emergency Contacts</a>
+        <a href="donate.html">Donate</a>
+        <a href="volunteer-registration.html">Volunteer</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="alerts.html#report" class="btn btn-emergency btn-sm">Report Emergency</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="eyebrow">Support relief efforts</div>
+        <h1>Donate</h1>
+        <p style="max-width:560px;">Every donation is tracked from intake to distribution and reflected in the relevant camp's inventory.</p>
+      </div>
+    </section>
+    <section class="section-tight">
+      <div class="container grid grid-3">
+        <div class="card"><span class="badge badge-advisory">Money</span><h3 style="margin-top:10px;">Financial contribution</h3><p>Funds are allocated to the highest-need camps first, reviewed weekly by admins.</p></div>
+        <div class="card"><span class="badge badge-watch">Supplies</span><h3 style="margin-top:10px;">Goods donation</h3><p>Food, clothing, bedding, and hygiene kits — schedule a drop-off at your nearest camp.</p></div>
+        <div class="card"><span class="badge badge-warning">Blood</span><h3 style="margin-top:10px;">Blood donation</h3><p>Coordinated with partner hospitals in disaster-affected districts.</p></div>
+      </div>
+    </section>
+    <section class="section" style="background:var(--panel);border-top:1px solid var(--line);">
+      <div class="container" style="max-width:560px;">
+        <div class="section-head"><div class="eyebrow">Make a donation</div><h2>Financial contribution</h2></div>
+        <form data-validate data-allow-submit id="donateForm">
+          <div class="field">
+            <label>Amount (INR)</label>
+            <div class="flex gap-2" style="flex-wrap:wrap;" id="donateAmountPresets">
+              <button type="button" class="btn btn-outline btn-sm" data-amount="500">₹500</button>
+              <button type="button" class="btn btn-outline btn-sm" data-amount="1000">₹1,000</button>
+              <button type="button" class="btn btn-outline btn-sm" data-amount="5000">₹5,000</button>
+              <button type="button" class="btn btn-outline btn-sm" data-amount="10000">₹10,000</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="donateAmount">Or enter a custom amount</label>
+            <input id="donateAmount" class="input" type="number" min="1" placeholder="e.g. 2500" required />
+            <span class="error-msg">Please enter a donation amount.</span>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="donateName">Full name</label>
+              <input id="donateName" class="input" type="text" required />
+              <span class="error-msg">Name is required.</span>
+            </div>
+            <div class="field">
+              <label for="donateEmail">Email</label>
+              <input id="donateEmail" class="input" type="email" required />
+              <span class="error-msg">A valid email is required.</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="donatePurpose">Direct my donation to (optional)</label>
+            <select id="donatePurpose" class="select">
+              <option value="">Highest-need camp (recommended)</option>
+              <option>Andheri West Community Camp</option>
+              <option>Puri Coastal Camp</option>
+              <option>Nainital Ridge Camp</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Submit Donation</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Donation demo-mode modal -->
+  <div class="modal-overlay" id="donateDemoModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>This is a demo</h3>
+        <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+      </div>
+      <p>ResQConnect isn't connected to a real payment gateway yet — no money has been charged or transferred. In a production build, this step would hand off to a licensed payment processor.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" type="button" data-modal-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color:#fff;"><span class="logo__mark">R</span>ResQConnect</a>
+          <p>A disaster response &amp; relief management platform connecting citizens, volunteers, NGOs, rescue teams, and administrators.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="alerts.html">Disaster Alerts</a>
+          <a href="safety.html">Safety Guidelines</a>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <a href="volunteer-registration.html">Volunteer</a>
+          <a href="donate.html">Donate</a>
+          <a href="register.html">Create Account</a>
+          <a href="login.html">Log In</a>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <a href="relief-camps.html">Relief Camps</a>
+          <a href="contacts.html">Emergency Contacts</a>
+          <a href="citizen-missing.html">Missing Persons</a>
+        </div>
+        <div>
+          <h4>Roles</h4>
+          <a href="citizen-dashboard.html">Citizen</a>
+          <a href="volunteer-dashboard.html">Volunteer</a>
+          <a href="ngo-dashboard.html">NGO</a>
+          <a href="rescue-dashboard.html">Rescue Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> ResQConnect. Built for resilience.</span>
+        <span class="footer-emergency mono">Emergency Helpline: 108</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("donateForm");
+      const amountInput = document.getElementById("donateAmount");
+      const presetBtns = document.querySelectorAll("#donateAmountPresets [data-amount]");
+      const demoModal = document.getElementById("donateDemoModal");
+
+      // Quick-amount buttons fill the custom amount field and mark
+      // themselves visually selected.
+      presetBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          amountInput.value = btn.getAttribute("data-amount");
+          presetBtns.forEach((b) => b.classList.remove("btn-primary"));
+          presetBtns.forEach((b) => b.classList.add("btn-outline"));
+          btn.classList.remove("btn-outline");
+          btn.classList.add("btn-primary");
+        });
+      });
+
+      if (!form || !window.handleDemoSubmit) return;
+      handleDemoSubmit(form, {
+        loadingText: "Processing…",
+        onValid: () => {
+          if (demoModal) {
+            demoModal.classList.add("open");
+            document.body.style.overflow = "hidden";
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Contacts — ResQConnect</title>
+  <meta name="description" content="National and state emergency helpline numbers." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      <nav id="navLinks" class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="alerts.html">Alerts</a>
+        <a href="safety.html">Safety</a>
+        <a href="relief-camps.html">Relief Camps</a>
+        <a href="contacts.html">Emergency Contacts</a>
+        <a href="donate.html">Donate</a>
+        <a href="volunteer-registration.html">Volunteer</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="alerts.html#report" class="btn btn-emergency btn-sm">Report Emergency</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="eyebrow">Save these numbers</div>
+        <h1>Emergency Contacts</h1>
+        <p style="max-width:560px;">National helplines work from anywhere in India. State control rooms are best for local, on-the-ground coordination.</p>
+      </div>
+    </section>
+    <section class="section-tight">
+      <div class="container grid grid-4">
+        <div class="card text-center"><h3 style="font-size:28px;font-family:var(--font-display);color:var(--alert);">108</h3><p>National Emergency &amp; Ambulance</p></div>
+        <div class="card text-center"><h3 style="font-size:28px;font-family:var(--font-display);color:var(--alert);">101</h3><p>Fire Services</p></div>
+        <div class="card text-center"><h3 style="font-size:28px;font-family:var(--font-display);color:var(--teal);">100</h3><p>Police</p></div>
+        <div class="card text-center"><h3 style="font-size:28px;font-family:var(--font-display);color:var(--teal);">1078</h3><p>Disaster Management (NDMA)</p></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">State control rooms</div>
+          <h2>Direct lines by state</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>State</th><th>Control Room</th><th>Phone</th><th>Hours</th></tr></thead>
+            <tbody>
+              <tr><td>Maharashtra</td><td>State Emergency Operations Centre, Mumbai</td><td class="mono">1077</td><td>24/7</td></tr>
+              <tr><td>Odisha</td><td>Odisha State Disaster Management Authority</td><td class="mono">1070</td><td>24/7</td></tr>
+              <tr><td>Uttarakhand</td><td>State Emergency Operations Centre</td><td class="mono">1070</td><td>24/7</td></tr>
+              <tr><td>Tamil Nadu</td><td>State Disaster Management Authority</td><td class="mono">1070</td><td>24/7</td></tr>
+              <tr><td>Bihar</td><td>Bihar State Disaster Management Authority</td><td class="mono">1070</td><td>24/7</td></tr>
+              <tr><td>Kerala</td><td>Kerala State Disaster Management Authority</td><td class="mono">1077</td><td>24/7</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-info" style="margin-top:24px;">
+          <div>
+            <strong>NDRF (National Disaster Response Force)</strong>
+            <p>For large-scale rescue operations, NDRF teams can be requested through the state control room or via 1078.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--panel);border-top:1px solid var(--line);">
+      <div class="container" style="max-width:560px;">
+        <div class="section-head">
+          <div class="eyebrow">Get in touch</div>
+          <h2>Send us a message</h2>
+          <p>For non-emergency questions about the platform. For real emergencies, use the numbers above or send an SOS.</p>
+        </div>
+        <form data-validate data-allow-submit id="contactForm">
+          <div class="field">
+            <label for="contactName">Name</label>
+            <input id="contactName" class="input" type="text" required />
+            <span class="error-msg">Name is required.</span>
+          </div>
+          <div class="field">
+            <label for="contactEmail">Email</label>
+            <input id="contactEmail" class="input" type="email" required />
+            <span class="error-msg">A valid email is required.</span>
+          </div>
+          <div class="field">
+            <label for="contactSubject">Subject</label>
+            <input id="contactSubject" class="input" type="text" required />
+            <span class="error-msg">Subject is required.</span>
+          </div>
+          <div class="field">
+            <label for="contactMessage">Message</label>
+            <textarea id="contactMessage" class="textarea" maxlength="500" required></textarea>
+            <span class="error-msg">Please enter a message.</span>
+            <span class="hint">Up to 500 characters.</span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color:#fff;"><span class="logo__mark">R</span>ResQConnect</a>
+          <p>A disaster response &amp; relief management platform connecting citizens, volunteers, NGOs, rescue teams, and administrators.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="alerts.html">Disaster Alerts</a>
+          <a href="safety.html">Safety Guidelines</a>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <a href="volunteer-registration.html">Volunteer</a>
+          <a href="donate.html">Donate</a>
+          <a href="register.html">Create Account</a>
+          <a href="login.html">Log In</a>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <a href="relief-camps.html">Relief Camps</a>
+          <a href="contacts.html">Emergency Contacts</a>
+          <a href="citizen-missing.html">Missing Persons</a>
+        </div>
+        <div>
+          <h4>Roles</h4>
+          <a href="citizen-dashboard.html">Citizen</a>
+          <a href="volunteer-dashboard.html">Volunteer</a>
+          <a href="ngo-dashboard.html">NGO</a>
+          <a href="rescue-dashboard.html">Rescue Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> ResQConnect. Built for resilience.</span>
+        <span class="footer-emergency mono">Emergency Helpline: 108</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("contactForm");
+      if (!form || !window.handleDemoSubmit) return;
+
+      handleDemoSubmit(form, {
+        loadingText: "Sending…",
+        onValid: () => {
+          form.reset();
+          if (window.showToast) {
+            showToast({ type: "success", message: "Message submitted in demo mode — no backend is connected yet." });
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

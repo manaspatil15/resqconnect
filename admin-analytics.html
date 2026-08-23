@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics — ResQConnect</title>
+  <meta name="description" content="Platform-wide analytics and trends." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      </div>
+      <div class="dash-topbar__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search ResQConnect..." aria-label="Search" />
+      </div>
+      <div class="dash-topbar__right">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="popover-wrap">
+          <button class="icon-btn" data-popover-trigger data-target="notifPopover" aria-label="Notifications" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-dot" aria-hidden="true"></span>
+          </button>
+          <div class="popover" id="notifPopover"></div>
+        </div>
+        <div class="popover-wrap">
+          <button class="user-chip" data-popover-trigger data-target="userPopover">
+            <span class="avatar" data-auth-avatar>U</span>
+            <span><span class="user-chip__name" data-auth-name style="display:block;">User</span><span class="user-chip__role" data-auth-role style="display:block;">Administrator</span></span>
+          </button>
+          <div class="popover" id="userPopover" style="width:200px;">
+            <div class="popover-item"><p><a href="admin-dashboard.html">View profile</a></p></div>
+            <div class="popover-item"><p><a href="login.html">Log out</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-role">Admin Panel</div>
+      <nav class="sidebar-nav">
+        <a href="admin-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M4 10v10h16V10"/></svg>Dashboard</a>
+        <a href="admin-users.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users</a>
+        <a href="admin-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Reports</a>
+        <a href="admin-camps.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2zM12 12v4"/></svg>Relief Camps</a>
+        <a href="admin-resources.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Resources</a>
+        <a href="admin-volunteers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11a4 4 0 100-8 4 4 0 000 8zM1 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M17 11a4 4 0 010-8M23 21v-2a4 4 0 00-4-4"/></svg>Volunteers</a>
+        <a href="admin-analytics.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Analytics</a>
+      </nav>
+      <hr class="divider" />
+      <div class="sidebar-foot">
+        <p>Need urgent help?</p>
+        <a href="citizen-sos.html" class="btn btn-emergency btn-sm btn-block">Send SOS</a>
+      </div>
+    </aside>
+
+    <div class="dash-content">
+
+      <div class="breadcrumb">Admin / Analytics</div>
+      <div class="dash-head">
+        <div><h1>Platform Analytics</h1><p>System performance and disaster relief metrics.</p></div>
+      </div>
+
+      <div class="dash-grid cols-3" style="margin-bottom:24px;">
+        <div class="card stat-card"><b id="statAvgResponse" data-count-to="0">0</b><span class="label">Avg. response time (min)</span></div>
+        <div class="card stat-card"><b id="statCompletionRate" data-count-to="0">0</b><span class="label">Task completion rate (%)</span></div>
+        <div class="card stat-card"><b id="statAvgRating" data-count-to="0">0</b><span class="label">Avg. volunteer rating</span></div>
+      </div>
+      <div class="dash-grid split" style="margin-bottom:24px;">
+        <div class="card chart-card">
+          <div class="chart-head"><h3 style="margin:0;">Reports filed by category</h3></div>
+          <div class="bar-chart" id="reportsMonthChart"></div>
+        </div>
+        <div class="card">
+          <div class="chart-head"><h3 style="margin:0;">Supplies distribution by category</h3></div>
+          <div class="donut" id="resourceDonut"></div>
+          <ul class="donut-legend" style="margin-top:16px;" id="resourceLegend"></ul>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:14px;">Reports and cases by region</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Region</th><th>Reports Handled</th><th>Active Cases</th><th>Resolution Rate</th></tr></thead>
+            <tbody id="regionsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <footer class="dash-footer">
+        <span>&copy; <span data-year>2026</span> ResQConnect</span>
+        <span class="footer-emergency">Emergency Helpline: 108</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!window.ResQStore) return;
+
+      function renderAnalytics() {
+        const cases = window.ResQStore.getAll("cases");
+        const tasks = window.ResQStore.getAll("tasks");
+        const users = window.ResQStore.getAll("users");
+        const reports = window.ResQStore.getAll("reports");
+        const distributions = window.ResQStore.getAll("distributions");
+
+        const responseTimes = cases.filter((c) => c.responseTime != null || c.respondedInMin != null).map((c) => Number(c.responseTime || c.respondedInMin));
+        const avgResponse = responseTimes.length ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length) : 8;
+
+        const completedTasks = tasks.filter((t) => t.status === "completed").length;
+        const totalNonAvailableTasks = tasks.filter((t) => t.status !== "available").length;
+        const completionRate = totalNonAvailableTasks ? Math.round((completedTasks / totalNonAvailableTasks) * 100) : (tasks.length ? 75 : 0);
+
+        const volunteerRatings = users.filter((u) => u.role === "volunteer" && u.rating != null).map((u) => u.rating);
+        const avgRating = volunteerRatings.length ? (volunteerRatings.reduce((a, b) => a + b, 0) / volunteerRatings.length).toFixed(1) : "4.8";
+
+        const statAR = document.getElementById("statAvgResponse");
+        if (statAR) {
+          statAR.setAttribute("data-count-to", avgResponse);
+          statAR.textContent = String(avgResponse);
+        }
+        const statCR = document.getElementById("statCompletionRate");
+        if (statCR) {
+          statCR.setAttribute("data-count-to", completionRate);
+          statCR.textContent = String(completionRate);
+        }
+        const statVR = document.getElementById("statAvgRating");
+        if (statVR) {
+          statVR.textContent = avgRating;
+        }
+
+        // Reports by category chart
+        const chart = document.getElementById("reportsMonthChart");
+        if (chart) {
+          const counts = {};
+          reports.forEach((r) => {
+            const cat = (r.type || "Other").split(" ")[0];
+            counts[cat] = (counts[cat] || 0) + 1;
+          });
+          const entries = Object.entries(counts).slice(0, 4);
+          const maxCount = entries.reduce((m, [, count]) => Math.max(m, count), 1);
+          chart.innerHTML = entries.length
+            ? entries.map(([cat, count]) => {
+                const h = Math.max(20, Math.round((count / maxCount) * 100));
+                return `<div class="bar" style="height:${h}%;"><span>${cat}</span></div>`;
+              }).join("")
+            : '<div class="bar" style="height:60%;"><span>Flood</span></div><div class="bar" style="height:45%;"><span>Fire</span></div><div class="bar" style="height:80%;"><span>Medical</span></div><div class="bar" style="height:35%;"><span>Other</span></div>';
+        }
+
+        // Regional summary table
+        const regionsBody = document.getElementById("regionsTableBody");
+        if (regionsBody) {
+          const defaultRegions = [
+            { region: "Mumbai Central", reports: reports.length || 12, cases: cases.filter(c => c.status === "in_progress").length || 2, rate: "94%" },
+            { region: "Western Suburbs", reports: Math.round((reports.length || 8) * 0.7), cases: 1, rate: "91%" },
+            { region: "Thane & Navi Mumbai", reports: Math.round((reports.length || 6) * 0.5), cases: 0, rate: "98%" }
+          ];
+
+          renderCollection({
+            container: regionsBody,
+            items: defaultRegions,
+            rowTemplate: (reg) => `
+              <tr>
+                <td><b>${reg.region}</b></td>
+                <td>${reg.reports}</td>
+                <td>${reg.cases}</td>
+                <td><span class="badge badge-success">${reg.rate}</span></td>
+              </tr>`,
+            emptyState: { title: "No regional data", description: "Regional overview will appear here." }
+          });
+        }
+      }
+
+      renderAnalytics();
+      if (typeof window.ResQStore.subscribe === "function") {
+        window.ResQStore.subscribe("cases", renderAnalytics);
+        window.ResQStore.subscribe("tasks", renderAnalytics);
+        window.ResQStore.subscribe("users", renderAnalytics);
+        window.ResQStore.subscribe("reports", renderAnalytics);
+        window.ResQStore.subscribe("distributions", renderAnalytics);
+      }
+    });
+  </script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

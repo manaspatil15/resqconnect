@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disaster Alerts — ResQConnect</title>
+  <meta name="description" content="Live disaster alerts across India, filterable by severity, with a form to report a new emergency." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      <nav id="navLinks" class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="alerts.html">Alerts</a>
+        <a href="safety.html">Safety</a>
+        <a href="relief-camps.html">Relief Camps</a>
+        <a href="contacts.html">Emergency Contacts</a>
+        <a href="donate.html">Donate</a>
+        <a href="volunteer-registration.html">Volunteer</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="alerts.html#report" class="btn btn-emergency btn-sm">Report Emergency</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="eyebrow">Live Alerts</div>
+        <h1>Disaster Alerts</h1>
+        <p style="max-width:560px;">Every alert below has been verified by an administrator. Severity follows the national advisory scale: Advisory, Watch, Warning, Critical.</p>
+
+        <div class="tabs" data-filter-group style="margin-top:24px;">
+          <button type="button" data-status-filter="all" class="active">All</button>
+          <button type="button" data-status-filter="critical">Critical</button>
+          <button type="button" data-status-filter="warning">Warning</button>
+          <button type="button" data-status-filter="watch">Watch</button>
+          <button type="button" data-status-filter="advisory">Advisory</button>
+        </div>
+
+        <div class="field" style="max-width:360px;margin-top:16px;">
+          <label for="alertSearch" class="sr-only">Search alerts</label>
+          <input id="alertSearch" class="input" type="search" placeholder="Search by title or location…" />
+        </div>
+
+        <div class="grid grid-2" id="alertsGrid" style="margin-top:20px;">
+          <!-- rendered from ResQStore.getAll("alerts") by the page script below -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Alert details modal -->
+    <div class="modal-overlay" id="alertDetailsModal">
+      <div class="modal">
+        <div class="modal-head">
+          <h3 id="alertDetailsTitle">Alert</h3>
+          <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+        </div>
+        <div id="alertDetailsBody"></div>
+      </div>
+    </div>
+
+    <section class="section" id="report" style="background:var(--panel);border-top:1px solid var(--line);">
+      <div class="container" style="max-width:640px;">
+        <div class="section-head">
+          <div class="eyebrow">Report an emergency</div>
+          <h2>See something? Report it.</h2>
+          <p>This report is reviewed by an administrator and routed to the nearest rescue team. For life-threatening emergencies, use SOS instead.</p>
+        </div>
+        <form data-validate data-allow-submit id="publicReportForm">
+          <div class="field-row">
+            <div class="field">
+              <label for="alertType">Disaster type</label>
+              <select id="alertType" class="select" required>
+                <option value="">Select type</option>
+                <option>Flood</option>
+                <option>Cyclone</option>
+                <option>Earthquake</option>
+                <option>Fire</option>
+                <option>Landslide</option>
+                <option>Other</option>
+              </select>
+              <span class="error-msg">Please select a disaster type.</span>
+            </div>
+            <div class="field">
+              <label for="alertSeverity">Perceived severity</label>
+              <select id="alertSeverity" class="select" required>
+                <option value="">Select severity</option>
+                <option>Advisory</option>
+                <option>Watch</option>
+                <option>Warning</option>
+                <option>Critical</option>
+              </select>
+              <span class="error-msg">Please select a severity.</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="alertLocation">Location</label>
+            <input id="alertLocation" class="input" type="text" placeholder="Area, city, state" required />
+            <span class="error-msg">Location is required.</span>
+          </div>
+          <div class="field">
+            <label for="alertDesc">Description</label>
+            <textarea id="alertDesc" class="textarea" placeholder="What are you seeing? Include number of people affected if known." required></textarea>
+            <span class="error-msg">Please describe what's happening.</span>
+          </div>
+          <div class="field">
+            <label for="alertPhoto">Photo (optional)</label>
+            <input id="alertPhoto" class="input" type="file" accept="image/*" />
+            <span class="hint">Helps administrators verify the report faster.</span>
+          </div>
+          <button type="submit" class="btn btn-emergency btn-block">Submit Report</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color:#fff;"><span class="logo__mark">R</span>ResQConnect</a>
+          <p>A disaster response &amp; relief management platform connecting citizens, volunteers, NGOs, rescue teams, and administrators.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="alerts.html">Disaster Alerts</a>
+          <a href="safety.html">Safety Guidelines</a>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <a href="volunteer-registration.html">Volunteer</a>
+          <a href="donate.html">Donate</a>
+          <a href="register.html">Create Account</a>
+          <a href="login.html">Log In</a>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <a href="relief-camps.html">Relief Camps</a>
+          <a href="contacts.html">Emergency Contacts</a>
+          <a href="citizen-missing.html">Missing Persons</a>
+        </div>
+        <div>
+          <h4>Roles</h4>
+          <a href="citizen-dashboard.html">Citizen</a>
+          <a href="volunteer-dashboard.html">Volunteer</a>
+          <a href="ngo-dashboard.html">NGO</a>
+          <a href="rescue-dashboard.html">Rescue Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> ResQConnect. Built for resilience.</span>
+        <span class="footer-emergency mono">Emergency Helpline: 108</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Alerts page — single source of truth is ResQStore.getAll("alerts").
+    // Handles severity tabs, text search, card rendering, and the
+    // details modal. This page doesn't load dashboard.js, so the tab
+    // filtering logic lives here rather than relying on
+    // initStatusFilters (which is dashboard-only).
+    document.addEventListener("DOMContentLoaded", () => {
+      const grid = document.getElementById("alertsGrid");
+      const tabs = document.querySelectorAll("[data-status-filter]");
+      const searchInput = document.getElementById("alertSearch");
+      const modal = document.getElementById("alertDetailsModal");
+      if (!grid || !window.ResQStore) return;
+
+      const badgeClass = { critical: "badge-critical", warning: "badge-warning", watch: "badge-watch", advisory: "badge-advisory" };
+      let activeSeverity = "all";
+      let searchTerm = "";
+
+      function render() {
+        const all = window.ResQStore.getAll("alerts").filter((a) => a.active);
+        const filtered = all.filter((a) => {
+          const matchesSeverity = activeSeverity === "all" || a.sev === activeSeverity;
+          const haystack = (a.title + " " + a.location + " " + a.description).toLowerCase();
+          const matchesSearch = !searchTerm || haystack.includes(searchTerm);
+          return matchesSeverity && matchesSearch;
+        });
+
+        renderCollection({
+          container: grid,
+          items: filtered,
+          rowTemplate: (a) => `
+            <div class="card card-hover" data-alert-id="${a.id}" tabindex="0" role="button" aria-label="View details for ${a.title}">
+              <div class="flex justify-between items-center" style="margin-bottom:10px;">
+                <span class="badge ${badgeClass[a.sev] || "badge-neutral"}">${a.sev.toUpperCase()}</span>
+                <span class="mono" style="font-size:11.5px;color:var(--ink-faint);">${a.id}</span>
+              </div>
+              <h3 style="margin-bottom:4px;">${a.title}</h3>
+              <p style="margin-bottom:6px;">${a.location}</p>
+              <p style="margin:0;font-size:13px;">${a.description}</p>
+            </div>`,
+          emptyState: {
+            title: "No alerts found",
+            description: "Try changing your filters or search terms."
+          }
+        });
+
+        grid.querySelectorAll("[data-alert-id]").forEach((card) => {
+          const open = () => openDetails(card.getAttribute("data-alert-id"));
+          card.addEventListener("click", open);
+          card.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+          });
+        });
+      }
+
+      function openDetails(id) {
+        const alert = window.ResQStore.getById("alerts", id);
+        if (!alert || !modal) return;
+        modal.querySelector("#alertDetailsTitle").textContent = alert.title;
+        modal.querySelector("#alertDetailsBody").innerHTML = `
+          <div class="flex justify-between items-center" style="margin-bottom:14px;">
+            <span class="badge ${badgeClass[alert.sev] || "badge-neutral"}">${alert.sev.toUpperCase()}</span>
+            <span class="mono" style="font-size:12px;color:var(--ink-faint);">${alert.id}</span>
+          </div>
+          <p style="margin-bottom:6px;"><strong>Location:</strong> ${alert.location}</p>
+          <p style="margin-bottom:14px;">${alert.description}</p>
+          <p style="font-size:12.5px;color:var(--ink-faint);margin:0;">Reported ${new Date(alert.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</p>
+        `;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      tabs.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tabs.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeSeverity = btn.getAttribute("data-status-filter");
+          render();
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener("input", () => {
+          searchTerm = searchInput.value.trim().toLowerCase();
+          render();
+        });
+      }
+
+      const reportForm = document.getElementById("publicReportForm");
+      if (reportForm && window.handleDemoSubmit) {
+        handleDemoSubmit(reportForm, {
+          loadingText: "Submitting report…",
+          onValid: () => {
+            const type = document.getElementById("alertType").value;
+            const severity = document.getElementById("alertSeverity").value.toLowerCase();
+            const location = document.getElementById("alertLocation").value;
+            const desc = document.getElementById("alertDesc").value;
+
+            const record = window.ResQStore.add("reports", {
+              type,
+              severity,
+              location,
+              filedBy: "Public Report",
+              verified: false,
+              status: "reviewing",
+              description: desc,
+              createdAt: new Date().toISOString()
+            });
+
+            reportForm.reset();
+            if (window.showToast) {
+              showToast({
+                type: "success",
+                message: `Emergency report ${record.id} submitted for administrator review.`
+              });
+            }
+          }
+        });
+      }
+
+      render();
+    });
+  </script>
+</body>
+</html>

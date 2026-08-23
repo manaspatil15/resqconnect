@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In — ResQConnect</title>
+  <meta name="description" content="Log in to your ResQConnect account." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      <nav id="navLinks" class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="alerts.html">Alerts</a>
+        <a href="safety.html">Safety</a>
+        <a href="relief-camps.html">Relief Camps</a>
+        <a href="contacts.html">Emergency Contacts</a>
+        <a href="donate.html">Donate</a>
+        <a href="volunteer-registration.html">Volunteer</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="alerts.html#report" class="btn btn-emergency btn-sm">Report Emergency</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main>
+
+    <section class="section" style="display:flex;justify-content:center;">
+      <div class="container" style="max-width:420px;">
+        <div class="card" style="padding:36px;">
+          <div class="text-center" style="margin-bottom:24px;">
+            <div class="logo" style="justify-content:center;font-size:20px;"><span class="logo__mark">R</span>ResQConnect</div>
+            <p style="margin-top:8px;margin-bottom:0;">Log in to your account</p>
+          </div>
+          <form data-validate data-allow-submit id="loginForm">
+            <div class="field">
+              <label for="loginRole">I am a</label>
+              <select id="loginRole" class="select" required>
+                <option value="">Select role</option>
+                <option>Citizen</option>
+                <option>Volunteer</option>
+                <option>NGO</option>
+                <option>Rescue Team</option>
+                <option>Admin</option>
+              </select>
+              <span class="error-msg">Please select a role.</span>
+            </div>
+            <div class="field">
+              <label for="loginEmail">Email</label>
+              <input id="loginEmail" class="input" type="email" required />
+              <span class="error-msg">A valid email is required.</span>
+            </div>
+            <div class="field">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" class="input" type="password" minlength="8" required />
+              <span class="error-msg">Password must be at least 8 characters.</span>
+            </div>
+            <div class="flex justify-between items-center" style="margin-bottom:20px;">
+              <label class="checkbox-row"><input type="checkbox" /> Remember me</label>
+              <a href="#" id="forgotPasswordLink" style="font-size:13px;color:var(--teal);font-weight:600;">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Log In</button>
+          </form>
+          <p class="text-center" style="margin-top:20px;margin-bottom:0;font-size:13.5px;">Don't have an account? <a href="register.html" style="color:var(--teal);font-weight:600;">Register</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color:#fff;"><span class="logo__mark">R</span>ResQConnect</a>
+          <p>A disaster response &amp; relief management platform connecting citizens, volunteers, NGOs, rescue teams, and administrators.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="alerts.html">Disaster Alerts</a>
+          <a href="safety.html">Safety Guidelines</a>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <a href="volunteer-registration.html">Volunteer</a>
+          <a href="donate.html">Donate</a>
+          <a href="register.html">Create Account</a>
+          <a href="login.html">Log In</a>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <a href="relief-camps.html">Relief Camps</a>
+          <a href="contacts.html">Emergency Contacts</a>
+          <a href="citizen-missing.html">Missing Persons</a>
+        </div>
+        <div>
+          <h4>Roles</h4>
+          <a href="citizen-dashboard.html">Citizen</a>
+          <a href="volunteer-dashboard.html">Volunteer</a>
+          <a href="ngo-dashboard.html">NGO</a>
+          <a href="rescue-dashboard.html">Rescue Team</a>
+        </div>
+      </div>      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> ResQConnect. Built for resilience.</span>
+        <span class="footer-emergency mono">Emergency Helpline: 108</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("loginForm");
+      const roleSelect = document.getElementById("loginRole");
+      if (!form || !window.handleDemoSubmit) return;
+
+      const DASHBOARD_BY_ROLE = {
+        "Citizen": "citizen-dashboard.html",
+        "Volunteer": "volunteer-dashboard.html",
+        "NGO": "ngo-dashboard.html",
+        "Rescue Team": "rescue-dashboard.html",
+        "Admin": "admin-dashboard.html"
+      };
+
+      const forgotLink = document.getElementById("forgotPasswordLink");
+      if (forgotLink) {
+        forgotLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (window.showToast) {
+            showToast({
+              type: "info",
+              message: "Password reset is simulated in demo mode — in production, a secure reset link will be sent to your email."
+            });
+          }
+        });
+      }
+
+      handleDemoSubmit(form, {
+        loadingText: "Logging in…",
+        onValid: async () => {
+          const email = document.getElementById("loginEmail").value;
+          const password = document.getElementById("loginPassword").value;
+          const role = roleSelect.value;
+          const roleKey = role === "Rescue Team" ? "rescue" : role.toLowerCase();
+          const dest = DASHBOARD_BY_ROLE[role] || "citizen-dashboard.html";
+
+          if (window.ResQApi) {
+            try {
+              const res = await window.ResQApi.auth.login({ email, password, role: roleKey });
+              if (res && res.success && res.data) {
+                const userObj = Object.assign({}, res.data);
+                if (window.ResQStore) {
+                  window.ResQStore.setCurrentUser(userObj);
+                }
+                try {
+                  localStorage.setItem("resq_current_user", JSON.stringify(userObj));
+                  sessionStorage.setItem("resq_current_user", JSON.stringify(userObj));
+                  localStorage.setItem("user", JSON.stringify(userObj));
+                  sessionStorage.setItem("user", JSON.stringify(userObj));
+                } catch (e) {}
+                if (window.showToast) {
+                  showToast({ type: "success", message: `Welcome back, ${userObj.name}!`, duration: 1500 });
+                }
+                setTimeout(() => { window.location.href = dest; }, 500);
+                return;
+              }
+            } catch (err) {
+              console.warn("Login API call notice:", err.message);
+              if (err.status === 401 || err.status === 403) {
+                if (window.showToast) {
+                  showToast({ type: "error", message: err.message || "Invalid email or password." });
+                }
+                return;
+              }
+            }
+          }
+
+          if (window.ResQStore) {
+            window.ResQStore.setCurrentUser({ name: email.split("@")[0], email, role: roleKey });
+          }
+          if (window.showToast) {
+            showToast({ type: "info", message: "Logged in via local session.", duration: 1500 });
+          }
+          setTimeout(() => { window.location.href = dest; }, 500);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relief Camps — ResQConnect</title>
+  <meta name="description" content="Locate relief camps near you." />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      </div>
+      <div class="dash-topbar__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search ResQConnect..." aria-label="Search" />
+      </div>
+      <div class="dash-topbar__right">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="popover-wrap">
+          <button class="icon-btn" data-popover-trigger data-target="notifPopover" aria-label="Notifications" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-dot" aria-hidden="true"></span>
+          </button>
+          <div class="popover" id="notifPopover"></div>
+        </div>
+        <div class="popover-wrap">
+          <button class="user-chip" data-popover-trigger data-target="userPopover">
+            <span class="avatar" data-auth-avatar>U</span>
+            <span><span class="user-chip__name" data-auth-name style="display:block;">User</span><span class="user-chip__role" data-auth-role style="display:block;">Citizen</span></span>
+          </button>
+          <div class="popover" id="userPopover" style="width:200px;">
+            <div class="popover-item"><p><a href="citizen-profile.html">View profile</a></p></div>
+            <div class="popover-item"><p><a href="login.html">Log out</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-role">Citizen Panel</div>
+      <nav class="sidebar-nav">
+        <a href="citizen-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M4 10v10h16V10"/></svg>Dashboard</a>
+        <a href="citizen-report.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>Report Disaster</a>
+        <a href="citizen-sos.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>SOS</a>
+        <a href="citizen-requests.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Requests</a>
+        <a href="citizen-camps.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2zM12 12v4"/></svg>Relief Camps</a>
+        <a href="citizen-missing.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4a4 4 0 100 8 4 4 0 000-8zM3 21v-2a4 4 0 014-4h4M16 11l2 2 4-4"/></svg>Missing Persons</a>
+        <a href="citizen-notifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>Notifications</a>
+        <a href="citizen-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>Profile</a>
+      </nav>
+      <hr class="divider" />
+      <div class="sidebar-foot">
+        <p>Need urgent help?</p>
+        <a href="citizen-sos.html" class="btn btn-emergency btn-sm btn-block">Send SOS</a>
+      </div>
+    </aside>
+
+    <div class="dash-content">
+      <div class="breadcrumb">Citizen / Relief Camps</div>
+      <div class="dash-head">
+        <div><h1>Relief Camps Near You</h1><p>Camps within 10 km of your last known location.</p></div>
+      </div>
+
+      <div class="dash-grid split">
+        <div class="map-placeholder">
+          <div class="map-pin" style="top:35%;left:45%;"></div>
+          <div class="map-pin" style="top:60%;left:65%;background:var(--teal);"></div>
+        </div>
+        <div class="grid" style="gap:16px;" id="nearbyCamps"></div>
+      </div>
+
+      <div class="modal-overlay" id="requestModal">
+        <div class="modal">
+          <div class="modal-head"><h3 style="margin:0;" id="requestModalTitle">Request a camp spot</h3><button class="modal-close" data-modal-close aria-label="Close">&times;</button></div>
+          <form data-validate data-allow-submit id="campRequestForm">
+            <div class="field"><label for="reqPeople">Number of people</label><input id="reqPeople" class="input" type="number" min="1" required /><span class="error-msg">Required.</span></div>
+            <div class="field"><label for="reqNote">Notes (optional)</label><textarea id="reqNote" class="textarea"></textarea></div>
+            <button type="submit" class="btn btn-primary btn-block">Send Request</button>
+          </form>
+        </div>
+      </div>
+      <footer class="dash-footer">
+        <span>&copy; <span data-year>2026</span> ResQConnect</span>
+        <span class="footer-emergency">Emergency Helpline: 108</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const list = document.getElementById("nearbyCamps");
+      const requestForm = document.getElementById("campRequestForm");
+      const requestModalTitle = document.getElementById("requestModalTitle");
+      if (!list || !window.ResQStore) return;
+
+      let selectedCampId = null;
+
+      function statusFor(camp) {
+        const pct = camp.occupancy / camp.capacity;
+        if (pct >= 1) return { badge: "badge-critical", label: "Full" };
+        if (pct >= 0.85) return { badge: "badge-warning", label: "Nearly Full" };
+        return { badge: "badge-success", label: "Open" };
+      }
+
+      function render() {
+        const camps = window.ResQStore.getAll("camps").slice().sort((a, b) => (b.capacity - b.occupancy) - (a.capacity - a.occupancy)).slice(0, 4);
+        renderCollection({
+          container: list,
+          items: camps,
+          rowTemplate: (c) => {
+            const status = statusFor(c);
+            const pct = Math.round((c.occupancy / c.capacity) * 100);
+            const fillClass = pct >= 85 ? "low" : pct >= 60 ? "mid" : "";
+            return `
+              <div class="card">
+                <div class="flex justify-between items-center" style="margin-bottom:6px;"><h3 style="margin:0;font-size:15px;">${c.name}</h3><span class="badge ${status.badge}">${status.label}</span></div>
+                <p style="font-size:13px;margin-bottom:10px;">${c.location} · ${c.occupancy}/${c.capacity} capacity</p>
+                <div class="progress" style="margin-bottom:12px;"><div class="progress__fill ${fillClass}" data-fill="${pct}"></div></div>
+                <button type="button" class="btn btn-sm btn-outline" data-request-camp="${c.id}">Request a spot</button>
+              </div>`;
+          },
+          emptyState: { title: "No camps available", description: "Check back soon." }
+        });
+
+        list.querySelectorAll(".progress__fill").forEach((fill) => { fill.style.width = fill.getAttribute("data-fill") + "%"; });
+
+        list.querySelectorAll("[data-request-camp]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            selectedCampId = btn.getAttribute("data-request-camp");
+            const camp = window.ResQStore.getById("camps", selectedCampId);
+            if (requestModalTitle) requestModalTitle.textContent = `Request a spot — ${camp ? camp.name : "Relief Camp"}`;
+            document.getElementById("requestModal").classList.add("open");
+            document.body.style.overflow = "hidden";
+          });
+        });
+      }
+
+      if (requestForm && window.handleDemoSubmit) {
+        handleDemoSubmit(requestForm, {
+          loadingText: "Sending…",
+          onValid: () => {
+            const camp = window.ResQStore.getById("camps", selectedCampId);
+            const people = document.getElementById("reqPeople").value;
+            const record = window.ResQStore.add("helpRequests", {
+              title: `Shelter — ${people} people at ${camp ? camp.name : "a relief camp"}`,
+              category: "Shelter",
+              location: camp ? camp.location : "",
+              status: "pending",
+              createdAt: new Date().toISOString()
+            });
+            requestForm.reset();
+            document.getElementById("requestModal").classList.remove("open");
+            document.body.style.overflow = "";
+            showToast({ type: "success", message: `Camp spot request ${record.id} submitted.` });
+          }
+        });
+      }
+
+      render();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relief Camps — ResQConnect</title>
+  <meta name="description" content="Manage relief camps." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      </div>
+      <div class="dash-topbar__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search ResQConnect..." aria-label="Search" />
+      </div>
+      <div class="dash-topbar__right">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="popover-wrap">
+          <button class="icon-btn" data-popover-trigger data-target="notifPopover" aria-label="Notifications" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-dot" aria-hidden="true"></span>
+          </button>
+          <div class="popover" id="notifPopover"></div>
+        </div>
+        <div class="popover-wrap">
+          <button class="user-chip" data-popover-trigger data-target="userPopover">
+            <span class="avatar" data-auth-avatar>U</span>
+            <span><span class="user-chip__name" data-auth-name style="display:block;">User</span><span class="user-chip__role" data-auth-role style="display:block;">Administrator</span></span>
+          </button>
+          <div class="popover" id="userPopover" style="width:200px;">
+            <div class="popover-item"><p><a href="admin-dashboard.html">View profile</a></p></div>
+            <div class="popover-item"><p><a href="login.html">Log out</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-role">Admin Panel</div>
+      <nav class="sidebar-nav">
+        <a href="admin-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M4 10v10h16V10"/></svg>Dashboard</a>
+        <a href="admin-users.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users</a>
+        <a href="admin-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Reports</a>
+        <a href="admin-camps.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2zM12 12v4"/></svg>Relief Camps</a>
+        <a href="admin-resources.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Resources</a>
+        <a href="admin-volunteers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11a4 4 0 100-8 4 4 0 000 8zM1 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M17 11a4 4 0 010-8M23 21v-2a4 4 0 00-4-4"/></svg>Volunteers</a>
+        <a href="admin-analytics.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Analytics</a>
+      </nav>
+      <hr class="divider" />
+      <div class="sidebar-foot">
+        <p>Need urgent help?</p>
+        <a href="citizen-sos.html" class="btn btn-emergency btn-sm btn-block">Send SOS</a>
+      </div>
+    </aside>
+
+    <div class="dash-content">
+
+      <div class="breadcrumb">Admin / Relief Camps</div>
+      <div class="dash-head">
+        <div><h1>Relief Camps</h1><p id="campsSubtitle">Loading…</p></div>
+        <button type="button" class="btn btn-primary btn-sm" data-modal-open="addCampModal">Add Camp</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Camp</th><th>Location</th><th>Occupancy / Capacity</th><th>Status</th></tr></thead>
+          <tbody id="campsTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="modal-overlay" id="addCampModal">
+        <div class="modal">
+          <div class="modal-head"><h3 style="margin:0;">Add relief camp</h3><button class="modal-close" data-modal-close aria-label="Close">&times;</button></div>
+          <form data-validate data-allow-submit id="addCampForm">
+            <div class="field"><label for="cpName">Camp name</label><input id="cpName" class="input" type="text" required /><span class="error-msg">Required.</span></div>
+            <div class="field-row">
+              <div class="field"><label for="cpLoc">Location</label><input id="cpLoc" class="input" type="text" required /><span class="error-msg">Required.</span></div>
+              <div class="field"><label for="cpCap">Capacity</label><input id="cpCap" class="input" type="number" min="1" required /><span class="error-msg">Required.</span></div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Add Camp</button>
+          </form>
+        </div>
+      </div>
+      <footer class="dash-footer">
+        <span>&copy; <span data-year>2026</span> ResQConnect</span>
+        <span class="footer-emergency">Emergency Helpline: 108</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tableBody = document.getElementById("campsTableBody");
+      const subtitle = document.getElementById("campsSubtitle");
+      const form = document.getElementById("addCampForm");
+      if (!tableBody || !window.ResQStore) return;
+
+      function statusFor(camp) {
+        const occ = Number(camp.occupancy || 0);
+        const cap = Number(camp.capacity || 1);
+        const pct = occ / cap;
+        if (pct >= 1) return { label: "Full", badge: "badge-critical" };
+        if (pct >= 0.85) return { label: "Nearly Full", badge: "badge-warning" };
+        return { label: "Open", badge: "badge-success" };
+      }
+
+      function render() {
+        const camps = window.ResQStore.getAll("camps");
+        if (subtitle) subtitle.textContent = `${camps.length} camps active nationwide.`;
+
+        renderCollection({
+          container: tableBody,
+          items: camps,
+          rowTemplate: (c) => {
+            const status = statusFor(c);
+            return `<tr><td><b>${c.name}</b></td><td>${c.location}</td><td>${c.occupancy || 0} / ${c.capacity}</td><td><span class="badge ${status.badge}">${status.label}</span></td></tr>`;
+          },
+          emptyState: { title: "No relief camps", description: "Add your first camp to get started." }
+        });
+      }
+
+      if (form && window.handleDemoSubmit) {
+        handleDemoSubmit(form, {
+          loadingText: "Adding…",
+          onValid: () => {
+            const name = document.getElementById("cpName").value.trim();
+            const location = document.getElementById("cpLoc").value.trim();
+            const capacity = parseInt(document.getElementById("cpCap").value, 10);
+
+            const record = window.ResQStore.add("camps", {
+              name,
+              location,
+              capacity,
+              occupancy: 0,
+              status: "active"
+            });
+
+            form.reset();
+            const modal = document.getElementById("addCampModal");
+            if (modal) modal.classList.remove("open");
+            document.body.style.overflow = "";
+            render();
+            showToast({ type: "success", message: `Relief camp "${record.name}" added.` });
+          }
+        });
+      }
+
+      render();
+      if (typeof window.ResQStore.subscribe === "function") {
+        window.ResQStore.subscribe("camps", render);
+      }
+    });
+  </script>
+</body>
+</html>

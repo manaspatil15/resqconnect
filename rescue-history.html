@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>History — ResQConnect</title>
+  <meta name="description" content="Resolved rescue case history." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      </div>
+      <div class="dash-topbar__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search ResQConnect..." aria-label="Search" />
+      </div>
+      <div class="dash-topbar__right">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="popover-wrap">
+          <button class="icon-btn" data-popover-trigger data-target="notifPopover" aria-label="Notifications" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-dot" aria-hidden="true"></span>
+          </button>
+          <div class="popover" id="notifPopover"></div>
+        </div>
+        <div class="popover-wrap">
+          <button class="user-chip" data-popover-trigger data-target="userPopover">
+            <span class="avatar" data-auth-avatar>U</span>
+            <span><span class="user-chip__name" data-auth-name style="display:block;">User</span><span class="user-chip__role" data-auth-role style="display:block;">Rescue Team Lead</span></span>
+          </button>
+          <div class="popover" id="userPopover" style="width:200px;">
+            <div class="popover-item"><p><a href="rescue-dashboard.html">View profile</a></p></div>
+            <div class="popover-item"><p><a href="login.html">Log out</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-role">Rescue Panel</div>
+      <nav class="sidebar-nav">
+        <a href="rescue-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M4 10v10h16V10"/></svg>Dashboard</a>
+        <a href="rescue-cases.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Assigned Cases</a>
+        <a href="rescue-history.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3M21 12a9 9 0 11-9-9 9 9 0 019 9z"/></svg>History</a>
+      </nav>
+      <hr class="divider" />
+      <div class="sidebar-foot">
+        <p>Need urgent help?</p>
+        <a href="citizen-sos.html" class="btn btn-emergency btn-sm btn-block">Send SOS</a>
+      </div>
+    </aside>
+
+    <div class="dash-content">
+
+      <div class="breadcrumb">Rescue / History</div>
+      <div class="dash-head">
+        <div><h1>Case History</h1><p id="historySubtitle">Loading…</p></div>
+        
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Case ID</th><th>Description</th><th>Location</th><th>Resolved</th><th>Outcome</th></tr></thead>
+          <tbody id="historyTableBody"></tbody>
+        </table>
+      </div>
+      <footer class="dash-footer">
+        <span>&copy; <span data-year>2026</span> ResQConnect</span>
+        <span class="footer-emergency">Emergency Helpline: 108</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tableBody = document.getElementById("historyTableBody");
+      const subtitle = document.getElementById("historySubtitle");
+      if (!tableBody || !window.ResQStore) return;
+
+      function timeAgo(iso) {
+        if (!iso) return "Recently";
+        const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+        if (days < 1) return "Today";
+        if (days === 1) return "Yesterday";
+        if (days < 14) return `${days} days ago`;
+        return `${Math.round(days / 7)} weeks ago`;
+      }
+
+      function renderHistory() {
+        const cases = window.ResQStore.getAll("cases").filter((c) => c.status === "resolved").sort((a, b) => new Date(b.resolvedAt || 0) - new Date(a.resolvedAt || 0));
+        if (subtitle) subtitle.textContent = `${cases.length} case${cases.length === 1 ? "" : "s"} resolved.`;
+
+        renderCollection({
+          container: tableBody,
+          items: cases,
+          rowTemplate: (c) => `<tr><td class="mono">${c.id || c.caseId}</td><td>${c.title || c.description}</td><td>${c.location}</td><td>${timeAgo(c.resolvedAt)}</td><td><span class="badge badge-success">${c.outcome || "Resolved"}</span></td></tr>`,
+          emptyState: { title: "No resolved cases yet", description: "Cases your team resolves will show up here." }
+        });
+      }
+
+      renderHistory();
+      if (typeof window.ResQStore.subscribe === "function") {
+        window.ResQStore.subscribe("cases", renderHistory);
+      }
+    });
+  </script>
+</body>
+</html>

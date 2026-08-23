@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volunteer Registration — ResQConnect</title>
+  <meta name="description" content="Register as a ResQConnect volunteer and start accepting relief tasks." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      <nav id="navLinks" class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="alerts.html">Alerts</a>
+        <a href="safety.html">Safety</a>
+        <a href="relief-camps.html">Relief Camps</a>
+        <a href="contacts.html">Emergency Contacts</a>
+        <a href="donate.html">Donate</a>
+        <a href="volunteer-registration.html">Volunteer</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="alerts.html#report" class="btn btn-emergency btn-sm">Report Emergency</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main>
+
+    <section class="section-tight">
+      <div class="container" style="max-width:640px;">
+        <div class="eyebrow">Join the response network</div>
+        <h1>Volunteer Registration</h1>
+        <p>Takes about two minutes. You'll be able to browse and accept tasks as soon as your profile is approved (usually within a few hours).</p>
+
+        <form data-validate data-allow-submit id="volunteerForm" style="margin-top:28px;">
+          <div class="field-row">
+            <div class="field">
+              <label for="volName">Full name</label>
+              <input id="volName" class="input" type="text" required />
+              <span class="error-msg">Full name is required.</span>
+            </div>
+            <div class="field">
+              <label for="volPhone">Phone number</label>
+              <input id="volPhone" class="input" type="tel" pattern="[0-9]{10}" placeholder="10-digit mobile number" required />
+              <span class="error-msg">Enter a valid 10-digit phone number.</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="volEmail">Email</label>
+              <input id="volEmail" class="input" type="email" required />
+              <span class="error-msg">A valid email is required.</span>
+            </div>
+            <div class="field">
+              <label for="volCity">City</label>
+              <input id="volCity" class="input" type="text" required />
+              <span class="error-msg">City is required.</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="volSkills">Skills</label>
+            <select id="volSkills" class="select" required>
+              <option value="">Select your primary skill</option>
+              <option>First Aid / Medical</option>
+              <option>Search &amp; Rescue</option>
+              <option>Logistics &amp; Distribution</option>
+              <option>Cooking / Food Prep</option>
+              <option>Driving</option>
+              <option>Counseling</option>
+              <option>General Support</option>
+            </select>
+            <span class="error-msg">Please select a skill.</span>
+          </div>
+          <div class="field">
+            <label for="volAvailability">Availability</label>
+            <select id="volAvailability" class="select" required>
+              <option value="">Select availability</option>
+              <option>Weekdays</option>
+              <option>Weekends</option>
+              <option>On-call / Emergency only</option>
+              <option>Full-time</option>
+            </select>
+            <span class="error-msg">Please select your availability.</span>
+          </div>
+          <div class="field">
+            <label class="checkbox-row"><input type="checkbox" required /> I confirm the information above is accurate and I agree to the volunteer code of conduct.</label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Register as Volunteer</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color:#fff;"><span class="logo__mark">R</span>ResQConnect</a>
+          <p>A disaster response &amp; relief management platform connecting citizens, volunteers, NGOs, rescue teams, and administrators.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="alerts.html">Disaster Alerts</a>
+          <a href="safety.html">Safety Guidelines</a>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <a href="volunteer-registration.html">Volunteer</a>
+          <a href="donate.html">Donate</a>
+          <a href="register.html">Create Account</a>
+          <a href="login.html">Log In</a>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <a href="relief-camps.html">Relief Camps</a>
+          <a href="contacts.html">Emergency Contacts</a>
+          <a href="citizen-missing.html">Missing Persons</a>
+        </div>
+        <div>
+          <h4>Roles</h4>
+          <a href="citizen-dashboard.html">Citizen</a>
+          <a href="volunteer-dashboard.html">Volunteer</a>
+          <a href="ngo-dashboard.html">NGO</a>
+          <a href="rescue-dashboard.html">Rescue Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> ResQConnect. Built for resilience.</span>
+        <span class="footer-emergency mono">Emergency Helpline: 108</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("volunteerForm");
+      if (!form || !window.handleDemoSubmit) return;
+
+      handleDemoSubmit(form, {
+        loadingText: "Submitting application…",
+        onValid: async () => {
+          const name = document.getElementById("volName").value;
+          const email = document.getElementById("volEmail").value;
+          const phone = document.getElementById("volPhone") ? document.getElementById("volPhone").value : undefined;
+          const skill = document.getElementById("volSkills").value || "General Support";
+          const location = document.getElementById("volCity").value || "Mumbai";
+
+          if (window.ResQApi) {
+            try {
+              const res = await window.ResQApi.auth.register({
+                name,
+                email,
+                password: "password123",
+                role: "volunteer",
+                phone
+              });
+
+              if (res && res.success) {
+                if (window.ResQStore) {
+                  window.ResQStore.add("users", {
+                    _id: res.data._id,
+                    name,
+                    email,
+                    role: "volunteer",
+                    phone,
+                    status: "pending",
+                    skill,
+                    location,
+                    tasksDone: 0,
+                    rating: null
+                  });
+                }
+                form.reset();
+                if (window.showToast) {
+                  showToast({ type: "success", message: "Volunteer application submitted successfully — pending administrator review." });
+                }
+                return;
+              }
+            } catch (err) {
+              console.warn("Volunteer registration notice:", err.message);
+              if (err.status === 400) {
+                if (window.showToast) {
+                  showToast({ type: "error", message: err.message || "Email already registered." });
+                }
+                return;
+              }
+            }
+          }
+
+          if (window.ResQStore) {
+            window.ResQStore.add("users", {
+              name,
+              email,
+              role: "volunteer",
+              joined: "Aug 2026",
+              status: "pending",
+              skill,
+              location,
+              tasksDone: 0,
+              rating: null
+            });
+          }
+
+          form.reset();
+          if (window.showToast) {
+            showToast({ type: "success", message: "Volunteer application submitted in session mode — pending administrator review." });
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

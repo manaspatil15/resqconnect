@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Missing Persons — ResQConnect</title>
+  <meta name="description" content="Search and report missing persons." />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      </div>
+      <div class="dash-topbar__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search ResQConnect..." aria-label="Search" />
+      </div>
+      <div class="dash-topbar__right">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="popover-wrap">
+          <button class="icon-btn" data-popover-trigger data-target="notifPopover" aria-label="Notifications" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-dot" aria-hidden="true"></span>
+          </button>
+          <div class="popover" id="notifPopover"></div>
+        </div>
+        <div class="popover-wrap">
+          <button class="user-chip" data-popover-trigger data-target="userPopover">
+            <span class="avatar" data-auth-avatar>U</span>
+            <span><span class="user-chip__name" data-auth-name style="display:block;">User</span><span class="user-chip__role" data-auth-role style="display:block;">Citizen</span></span>
+          </button>
+          <div class="popover" id="userPopover" style="width:200px;">
+            <div class="popover-item"><p><a href="citizen-profile.html">View profile</a></p></div>
+            <div class="popover-item"><p><a href="login.html">Log out</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-role">Citizen Panel</div>
+      <nav class="sidebar-nav">
+        <a href="citizen-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M4 10v10h16V10"/></svg>Dashboard</a>
+        <a href="citizen-report.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>Report Disaster</a>
+        <a href="citizen-sos.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>SOS</a>
+        <a href="citizen-requests.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Requests</a>
+        <a href="citizen-camps.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2zM12 12v4"/></svg>Relief Camps</a>
+        <a href="citizen-missing.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4a4 4 0 100 8 4 4 0 000-8zM3 21v-2a4 4 0 014-4h4M16 11l2 2 4-4"/></svg>Missing Persons</a>
+        <a href="citizen-notifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>Notifications</a>
+        <a href="citizen-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>Profile</a>
+      </nav>
+      <hr class="divider" />
+      <div class="sidebar-foot">
+        <p>Need urgent help?</p>
+        <a href="citizen-sos.html" class="btn btn-emergency btn-sm btn-block">Send SOS</a>
+      </div>
+    </aside>
+
+    <div class="dash-content">
+      <div class="breadcrumb">Citizen / Missing Persons</div>
+      <div class="dash-head">
+        <div><h1>Missing Persons</h1><p>Search active cases or report someone missing.</p></div>
+        <button type="button" class="btn btn-emergency btn-sm" data-modal-open="missingModal">Report Missing Person</button>
+      </div>
+
+      <div class="dash-topbar__search w-full" style="width:100%;max-width:360px;margin-bottom:12px;">
+        <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="missingSearch" placeholder="Search by name or case ID" />
+      </div>
+      <div class="tabs" data-filter-group style="margin-bottom:16px;">
+        <button type="button" data-status-filter="all" class="active">All</button>
+        <button type="button" data-status-filter="reported">Reported</button>
+        <button type="button" data-status-filter="investigating">Searching</button>
+        <button type="button" data-status-filter="found">Found</button>
+      </div>
+      <div class="table-wrap" id="missingTable">
+        <table>
+          <thead><tr><th></th><th>Case ID</th><th>Name</th><th>Age</th><th>Last seen</th><th>Status</th></tr></thead>
+          <tbody id="missingTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="modal-overlay" id="missingModal">
+        <div class="modal">
+          <div class="modal-head"><h3 style="margin:0;">Report a missing person</h3><button class="modal-close" data-modal-close aria-label="Close">&times;</button></div>
+          <form data-validate data-allow-submit id="missingForm">
+            <div class="field"><label for="mpName">Full name</label><input id="mpName" class="input" type="text" required /><span class="error-msg">Required.</span></div>
+            <div class="field-row">
+              <div class="field"><label for="mpAge">Age</label><input id="mpAge" class="input" type="number" min="0" required /><span class="error-msg">Required.</span></div>
+              <div class="field"><label for="mpGender">Gender</label><select id="mpGender" class="select"><option>Male</option><option>Female</option><option>Other</option></select></div>
+            </div>
+            <div class="field"><label for="mpLast">Last seen location</label><input id="mpLast" class="input" type="text" required /><span class="error-msg">Required.</span></div>
+            <div class="field"><label for="mpLastAt">Last seen date/time</label><input id="mpLastAt" class="input" type="datetime-local" required /><span class="error-msg">Required.</span></div>
+            <div class="field"><label for="mpDesc">Description</label><textarea id="mpDesc" class="textarea" placeholder="Clothing, physical description, any medical conditions"></textarea></div>
+            <div class="field">
+              <label for="mpPhoto">Photo (optional)</label>
+              <input id="mpPhoto" class="input" type="file" accept="image/jpeg,image/png,image/webp" />
+              <span class="hint">JPG, PNG, or WEBP, up to 5MB. Helps searchers identify the person.</span>
+              <div id="mpPhotoPreview" hidden></div>
+            </div>
+            <button type="submit" class="btn btn-emergency btn-block">Submit Report</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Missing person details modal -->
+      <div class="modal-overlay" id="missingDetailsModal">
+        <div class="modal">
+          <div class="modal-head"><h3 id="missingDetailsTitle" style="margin:0;">Case</h3><button class="modal-close" data-modal-close aria-label="Close">&times;</button></div>
+          <div id="missingDetailsBody"></div>
+        </div>
+      </div>
+      <footer class="dash-footer">
+        <span>&copy; <span data-year>2026</span> ResQConnect</span>
+        <span class="footer-emergency">Emergency Helpline: 108</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tableBody = document.getElementById("missingTableBody");
+      const searchInput = document.getElementById("missingSearch");
+      const filterBtns = document.querySelectorAll("[data-status-filter]");
+      const detailsModal = document.getElementById("missingDetailsModal");
+      const form = document.getElementById("missingForm");
+      if (!tableBody || !window.ResQStore) return;
+
+      const STATUS_LABEL = { reported: "Reported", investigating: "Searching", found: "Found", closed: "Closed" };
+      const STATUS_BADGE = { reported: "badge-warning", investigating: "badge-watch", found: "badge-success", closed: "badge-neutral" };
+
+      const photoPreview = window.initFilePreview
+        ? initFilePreview({ input: document.getElementById("mpPhoto"), previewContainer: document.getElementById("mpPhotoPreview") })
+        : null;
+
+      let activeStatus = "all";
+      let searchTerm = "";
+
+      function timeSince(iso) {
+        const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+        if (days < 1) return "today";
+        if (days === 1) return "1 day ago";
+        return `${days} days ago`;
+      }
+
+      function render() {
+        const all = window.ResQStore.getAll("missingPersons");
+        const filtered = all.filter((p) => {
+          const matchesStatus = activeStatus === "all" || p.status === activeStatus;
+          const haystack = (p.name + " " + p.id).toLowerCase();
+          const matchesSearch = !searchTerm || haystack.includes(searchTerm);
+          return matchesStatus && matchesSearch;
+        });
+
+        renderCollection({
+          container: tableBody,
+          items: filtered,
+          rowTemplate: (p) => `
+            <tr data-case-id="${p.id}" style="cursor:pointer;">
+              <td>${p.photo ? `<img src="${p.photo}" alt="" style="width:32px;height:32px;border-radius:6px;object-fit:cover;">` : `<span class="avatar" style="width:32px;height:32px;font-size:11px;">${p.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}</span>`}</td>
+              <td class="mono">${p.id}</td>
+              <td>${p.name}</td>
+              <td>${p.age}</td>
+              <td>${p.lastSeen} — ${timeSince(p.lastSeenAt)}</td>
+              <td><span class="badge ${STATUS_BADGE[p.status] || "badge-neutral"}">${STATUS_LABEL[p.status] || p.status}</span></td>
+            </tr>`,
+          emptyState: { title: "No missing-person reports", description: "No reports match your current filters." }
+        });
+
+        if (tableBody.querySelector) {
+          Array.from(tableBody.querySelectorAll("[data-case-id]")).forEach((row) => {
+            row.addEventListener("click", () => openDetails(row.getAttribute("data-case-id")));
+          });
+        }
+      }
+
+      function openDetails(id) {
+        const p = window.ResQStore.getById("missingPersons", id);
+        if (!p || !detailsModal) return;
+        detailsModal.querySelector("#missingDetailsTitle").textContent = p.name;
+        detailsModal.querySelector("#missingDetailsBody").innerHTML = `
+          <div class="flex justify-between items-center" style="margin-bottom:14px;">
+            <span class="badge ${STATUS_BADGE[p.status] || "badge-neutral"}">${STATUS_LABEL[p.status] || p.status}</span>
+            <span class="mono" style="font-size:12px;color:var(--ink-faint);">${p.id}</span>
+          </div>
+          ${p.photo ? `<img src="${p.photo}" alt="" style="width:100%;max-height:220px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:14px;">` : ""}
+          <p style="margin-bottom:6px;"><strong>Age:</strong> ${p.age} · <strong>Gender:</strong> ${p.gender}</p>
+          <p style="margin-bottom:6px;"><strong>Last seen:</strong> ${p.lastSeen}</p>
+          <p style="margin-bottom:6px;"><strong>Last seen at:</strong> ${new Date(p.lastSeenAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</p>
+          <p style="margin:0;">${p.description || "No additional description provided."}</p>
+        `;
+        detailsModal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filterBtns.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeStatus = btn.getAttribute("data-status-filter");
+          render();
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener("input", () => {
+          searchTerm = searchInput.value.trim().toLowerCase();
+          render();
+        });
+      }
+
+      if (form && window.handleDemoSubmit) {
+        handleDemoSubmit(form, {
+          loadingText: "Submitting…",
+          onValid: () => {
+            const record = window.ResQStore.add("missingPersons", {
+              name: document.getElementById("mpName").value,
+              age: Number(document.getElementById("mpAge").value),
+              gender: document.getElementById("mpGender").value,
+              lastSeen: document.getElementById("mpLast").value,
+              lastSeenAt: new Date(document.getElementById("mpLastAt").value).toISOString(),
+              description: document.getElementById("mpDesc").value,
+              status: "reported",
+              photo: photoPreview && photoPreview.getPreviews()[0] ? photoPreview.getPreviews()[0].dataUrl : null
+            });
+            form.reset();
+            if (photoPreview) photoPreview.clear();
+            document.getElementById("missingModal").classList.remove("open");
+            document.body.style.overflow = "";
+            render();
+            showToast({ type: "success", message: `Missing person report ${record.id} submitted.` });
+          }
+        });
+      }
+
+      render();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOS — ResQConnect</title>
+  <meta name="description" content="Send an emergency SOS with your location." />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      </div>
+      <div class="dash-topbar__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search ResQConnect..." aria-label="Search" />
+      </div>
+      <div class="dash-topbar__right">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="popover-wrap">
+          <button class="icon-btn" data-popover-trigger data-target="notifPopover" aria-label="Notifications" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-dot" aria-hidden="true"></span>
+          </button>
+          <div class="popover" id="notifPopover"></div>
+        </div>
+        <div class="popover-wrap">
+          <button class="user-chip" data-popover-trigger data-target="userPopover">
+            <span class="avatar" data-auth-avatar>U</span>
+            <span><span class="user-chip__name" data-auth-name style="display:block;">User</span><span class="user-chip__role" data-auth-role style="display:block;">Citizen</span></span>
+          </button>
+          <div class="popover" id="userPopover" style="width:200px;">
+            <div class="popover-item"><p><a href="citizen-profile.html">View profile</a></p></div>
+            <div class="popover-item"><p><a href="login.html">Log out</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-role">Citizen Panel</div>
+      <nav class="sidebar-nav">
+        <a href="citizen-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M4 10v10h16V10"/></svg>Dashboard</a>
+        <a href="citizen-report.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>Report Disaster</a>
+        <a href="citizen-sos.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>SOS</a>
+        <a href="citizen-requests.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Requests</a>
+        <a href="citizen-camps.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2zM12 12v4"/></svg>Relief Camps</a>
+        <a href="citizen-missing.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4a4 4 0 100 8 4 4 0 000-8zM3 21v-2a4 4 0 014-4h4M16 11l2 2 4-4"/></svg>Missing Persons</a>
+        <a href="citizen-notifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>Notifications</a>
+        <a href="citizen-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>Profile</a>
+      </nav>
+      <hr class="divider" />
+      <div class="sidebar-foot">
+        <p>Need urgent help?</p>
+        <a href="citizen-sos.html" class="btn btn-emergency btn-sm btn-block">Send SOS</a>
+      </div>
+    </aside>
+
+    <div class="dash-content">
+      <div class="breadcrumb">Citizen / SOS</div>
+      <div class="dash-head">
+        <div><h1>Emergency SOS</h1><p>Use only for immediate, life-threatening emergencies.</p></div>
+      </div>
+
+      <div class="dash-grid split">
+        <div class="card text-center" style="padding:48px 24px;">
+          <div class="stat-card__icon" style="width:64px;height:64px;background:var(--alert-bg);color:var(--alert);margin:0 auto 20px;">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+          </div>
+          <h2 style="margin-bottom:8px;">In immediate danger?</h2>
+          <p style="max-width:360px;margin:0 auto 24px;">Tapping the button below shares your live location and profile with the nearest rescue team.</p>
+          <button id="sosButton" class="btn btn-emergency btn-lg" style="min-width:260px;">Send Emergency SOS</button>
+          <div id="sosStatus" class="callout callout-info" hidden style="margin-top:20px;text-align:left;"></div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:20px;">
+            <h3 style="margin-bottom:10px;">Your shared details</h3>
+            <p style="margin-bottom:4px;font-size:13.5px;"><strong>Name:</strong> <span id="sosSharedName">Citizen</span></p>
+            <p style="margin-bottom:4px;font-size:13.5px;"><strong>Phone:</strong> <span id="sosSharedPhone">Registered Phone</span></p>
+            <p style="margin-bottom:0;font-size:13.5px;"><strong>Location:</strong> Auto-detected via GPS on send</p>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:10px;">Prefer to call?</h3>
+            <p style="margin-bottom:4px;font-size:14px;">National Emergency: <span class="mono">108</span></p>
+            <p style="margin-bottom:0;font-size:14px;">NDRF: <span class="mono">1078</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h3 style="margin-bottom:12px;">Recent SOS requests</h3>
+        <div id="sosHistory"></div>
+      </div>
+      <footer class="dash-footer">
+        <span>&copy; <span data-year>2026</span> ResQConnect</span>
+        <span class="footer-emergency">Emergency Helpline: 108</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    // SOS history list — re-renders whenever dashboard.js's SOS state
+    // machine creates a new record (see the resq:sos-created event).
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("sosHistory");
+      if (!container || !window.ResQStore) return;
+
+      const STATUS_BADGE = { pending: "badge-warning", assigned: "badge-watch", in_progress: "badge-watch", resolved: "badge-success", cancelled: "badge-neutral" };
+
+      function formatLoc(loc) {
+        if (!loc) return "Location shared";
+        if (typeof loc === "string") return loc;
+        if (loc.address) return loc.address;
+        if (loc.latitude != null && loc.longitude != null) {
+          const lat = typeof loc.latitude === "number" ? loc.latitude.toFixed(3) : loc.latitude;
+          const lng = typeof loc.longitude === "number" ? loc.longitude.toFixed(3) : loc.longitude;
+          return `${lat}, ${lng}`;
+        }
+        return "Location shared";
+      }
+
+      function isCitizenItem(item, user) {
+        if (!item || !user) return false;
+        const userId = String(user.id || user._id || "");
+        const userName = (user.name || user.fullName || user.username || "").trim().toLowerCase();
+        const userEmail = (user.email || "").trim().toLowerCase();
+
+        if (item.citizenId) {
+          if (typeof item.citizenId === "string" || typeof item.citizenId === "number") {
+            if (String(item.citizenId) === userId && userId.length > 0) return true;
+          } else if (typeof item.citizenId === "object") {
+            const cId = String(item.citizenId._id || item.citizenId.id || "");
+            if (cId === userId && userId.length > 0) return true;
+            if (item.citizenId.email && item.citizenId.email.toLowerCase() === userEmail && userEmail.length > 0) return true;
+            if (item.citizenId.name && item.citizenId.name.trim().toLowerCase() === userName && userName.length > 0) return true;
+          }
+        }
+        if (item.userId && String(item.userId) === userId && userId.length > 0) return true;
+        if (userName.length > 0) {
+          if (item.filedBy && typeof item.filedBy === "string" && item.filedBy.trim().toLowerCase() === userName) return true;
+          if (item.reportedBy && typeof item.reportedBy === "string" && item.reportedBy.trim().toLowerCase() === userName) return true;
+          if (item.requestedBy && typeof item.requestedBy === "string" && item.requestedBy.trim().toLowerCase() === userName) return true;
+        }
+        if (userEmail.length > 0 && item.email && typeof item.email === "string" && item.email.trim().toLowerCase() === userEmail) {
+          return true;
+        }
+        return false;
+      }
+
+      function render() {
+        const user = (window.ResQStore && window.ResQStore.getCurrentUser()) ||
+                     (window.ResQAuth && window.ResQAuth.getAuthUser());
+
+        const items = user
+          ? window.ResQStore.getAll("sos").filter(s => isCitizenItem(s, user)).slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          : [];
+
+        renderCollection({
+          container,
+          items,
+          rowTemplate: (s) => `
+            <div class="list-row">
+              <div class="list-row__icon" style="background:var(--alert-bg);color:var(--alert);">
+                <svg viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/></svg>
+              </div>
+              <div class="list-row__body">
+                <p><span class="mono">${s.id}</span> — ${formatLoc(s.location)}</p>
+                <span>${new Date(s.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</span>
+              </div>
+              <span class="badge ${STATUS_BADGE[s.status] || "badge-neutral"}" style="align-self:center;">${(s.status || "pending").replace("_", " ")}</span>
+            </div>`,
+          emptyState: { title: "No active SOS requests", description: "You currently have no emergency requests on record." }
+        });
+      }
+
+      document.addEventListener("resq:sos-created", render);
+      if (window.ResQStore && typeof window.ResQStore.subscribe === "function") {
+        window.ResQStore.subscribe("sos", render);
+      }
+      render();
+    });
+  </script>
+</body>
+</html>

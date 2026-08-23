@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — ResQConnect</title>
+  <meta name="description" content="Platform-wide administrator overview." />
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      </div>
+      <div class="dash-topbar__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search ResQConnect..." aria-label="Search" />
+      </div>
+      <div class="dash-topbar__right">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="popover-wrap">
+          <button class="icon-btn" data-popover-trigger data-target="notifPopover" aria-label="Notifications" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-dot" aria-hidden="true"></span>
+          </button>
+          <div class="popover" id="notifPopover"></div>
+        </div>
+        <div class="popover-wrap">
+          <button class="user-chip" data-popover-trigger data-target="userPopover">
+            <span class="avatar" data-auth-avatar>U</span>
+            <span><span class="user-chip__name" data-auth-name style="display:block;">User</span><span class="user-chip__role" data-auth-role style="display:block;">Administrator</span></span>
+          </button>
+          <div class="popover" id="userPopover" style="width:200px;">
+            <div class="popover-item"><p><a href="admin-dashboard.html">View profile</a></p></div>
+            <div class="popover-item"><p><a href="login.html">Log out</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-role">Admin Panel</div>
+      <nav class="sidebar-nav">
+        <a href="admin-dashboard.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M4 10v10h16V10"/></svg>Dashboard</a>
+        <a href="admin-users.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users</a>
+        <a href="admin-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Reports</a>
+        <a href="admin-camps.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2zM12 12v4"/></svg>Relief Camps</a>
+        <a href="admin-resources.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Resources</a>
+        <a href="admin-volunteers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11a4 4 0 100-8 4 4 0 000 8zM1 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M17 11a4 4 0 010-8M23 21v-2a4 4 0 00-4-4"/></svg>Volunteers</a>
+        <a href="admin-analytics.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Analytics</a>
+      </nav>
+      <hr class="divider" />
+      <div class="sidebar-foot">
+        <p>Need urgent help?</p>
+        <a href="citizen-sos.html" class="btn btn-emergency btn-sm btn-block">Send SOS</a>
+      </div>
+    </aside>
+
+    <div class="dash-content">
+
+      <div class="breadcrumb">Admin / Dashboard</div>
+      <div class="dash-head">
+        <div><h1>Platform Overview</h1><p>System-wide status across all regions.</p></div>
+      </div>
+
+      <div class="dash-grid cols-4" style="margin-bottom:28px;">
+        <div class="card stat-card"><div class="stat-card__top"><div class="stat-card__icon" style="background:var(--teal-bg);color:var(--teal);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg></div></div><b id="statUsers" data-count-to="0">0</b><span class="label">Total users</span></div>
+        <div class="card stat-card"><div class="stat-card__top"><div class="stat-card__icon" style="background:var(--alert-bg);color:var(--alert);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/></svg></div></div><b id="statReports" data-count-to="0">0</b><span class="label">Reports filed</span></div>
+        <div class="card stat-card"><div class="stat-card__top"><div class="stat-card__icon" style="background:var(--amber-bg);color:#A15E00;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/></svg></div></div><b id="statCamps" data-count-to="0">0</b><span class="label">Active relief camps</span></div>
+        <div class="card stat-card"><div class="stat-card__top"><div class="stat-card__icon" style="background:var(--green-bg);color:var(--green);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg></div></div><b id="statCriticalAlerts" data-count-to="0">0</b><span class="label">Critical alerts</span></div>
+      </div>
+
+      <div class="dash-grid split" style="margin-bottom:28px;">
+        <div class="card chart-card">
+          <div class="chart-head"><h3 style="margin:0;">Reports by type</h3></div>
+          <div class="bar-chart" id="reportsTypeChart"></div>
+        </div>
+        <div class="card">
+          <div class="chart-head"><h3 style="margin:0;">Reports by severity</h3></div>
+          <div class="donut" id="severityDonut"></div>
+          <ul class="donut-legend" style="margin-top:16px;" id="severityLegend"></ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="flex justify-between items-center" style="margin-bottom:14px;">
+          <h3 style="margin:0;">Recent reports awaiting verification</h3>
+          <a href="admin-reports.html" class="btn btn-sm btn-outline">View all</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ref</th><th>Type</th><th>Location</th><th>Filed by</th><th>Status</th></tr></thead>
+            <tbody id="pendingReportsBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <footer class="dash-footer">
+        <span>&copy; <span data-year>2026</span> ResQConnect</span>
+        <span class="footer-emergency">Emergency Helpline: 108</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!window.ResQStore) return;
+
+      function renderDashboard() {
+        const users = window.ResQStore.getAll("users");
+        const reports = window.ResQStore.getAll("reports");
+        const camps = window.ResQStore.getAll("camps");
+        const alerts = window.ResQStore.getAll("alerts");
+        const criticalAlerts = alerts.filter((a) => a.active && a.sev === "critical");
+
+        const statU = document.getElementById("statUsers");
+        if (statU) {
+          statU.setAttribute("data-count-to", users.length);
+          statU.textContent = String(users.length);
+        }
+        const statR = document.getElementById("statReports");
+        if (statR) {
+          statR.setAttribute("data-count-to", reports.length);
+          statR.textContent = String(reports.length);
+        }
+        const statC = document.getElementById("statCamps");
+        if (statC) {
+          statC.setAttribute("data-count-to", camps.length);
+          statC.textContent = String(camps.length);
+        }
+        const statA = document.getElementById("statCriticalAlerts");
+        if (statA) {
+          statA.setAttribute("data-count-to", criticalAlerts.length);
+          statA.textContent = String(criticalAlerts.length);
+        }
+
+        // Reports by Type Bar Chart
+        const typeChart = document.getElementById("reportsTypeChart");
+        if (typeChart) {
+          const typeCounts = {};
+          reports.forEach((r) => {
+            const t = r.type || "Other";
+            typeCounts[t] = (typeCounts[t] || 0) + 1;
+          });
+          const entries = Object.entries(typeCounts).slice(0, 5);
+          const maxVal = entries.reduce((m, [, count]) => Math.max(m, count), 1);
+          typeChart.innerHTML = entries.length
+            ? entries.map(([type, count]) => {
+                const h = Math.max(15, Math.round((count / maxVal) * 100));
+                const shortType = type.split(" ")[0] || type;
+                return `<div class="bar" style="height:${h}%;" title="${type}: ${count}"><span>${shortType}</span></div>`;
+              }).join("")
+            : '<div class="empty-state" style="padding:16px;"><p style="font-size:13px;">No report data</p></div>';
+        }
+
+        // Pending Reports Table
+        const pendingReports = reports.filter((r) => !r.verified && r.status !== "verified" && r.status !== "rejected").slice(0, 5);
+        const tbody = document.getElementById("pendingReportsBody");
+        if (tbody) {
+          renderCollection({
+            container: tbody,
+            items: pendingReports,
+            rowTemplate: (r) => {
+              const refId = r.id || r.reportId || r.referenceNumber || "RPT";
+              const filer = r.filedBy || (r.citizenId && r.citizenId.name) || "Citizen";
+              return `
+                <tr>
+                  <td class="mono">${refId}</td>
+                  <td>${r.type}</td>
+                  <td>${r.location}</td>
+                  <td>${filer}</td>
+                  <td><span class="badge badge-warning">Pending Review</span></td>
+                </tr>`;
+            },
+            emptyState: { title: "No pending reports", description: "All submitted reports have been reviewed." }
+          });
+        }
+      }
+
+      renderDashboard();
+      if (typeof window.ResQStore.subscribe === "function") {
+        window.ResQStore.subscribe("users", renderDashboard);
+        window.ResQStore.subscribe("reports", renderDashboard);
+        window.ResQStore.subscribe("camps", renderDashboard);
+        window.ResQStore.subscribe("alerts", renderDashboard);
+      }
+    });
+  </script>
+</body>
+</html>

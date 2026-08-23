@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relief Camp Locator — ResQConnect</title>
+  <meta name="description" content="Find active relief camps near you, with live capacity and available resources." />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      <nav id="navLinks" class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="alerts.html">Alerts</a>
+        <a href="safety.html">Safety</a>
+        <a href="relief-camps.html">Relief Camps</a>
+        <a href="contacts.html">Emergency Contacts</a>
+        <a href="donate.html">Donate</a>
+        <a href="volunteer-registration.html">Volunteer</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="alerts.html#report" class="btn btn-emergency btn-sm">Report Emergency</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section-tight">
+      <div class="container">
+        <div class="eyebrow">Find shelter</div>
+        <h1>Relief Camp Locator</h1>
+        <p style="max-width:560px;" id="campsIntro">Loading active camps…</p>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container" style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:32px;align-items:start;">
+        <div class="map-placeholder" aria-label="Map showing relief camp locations">
+          <div class="map-pin" style="top:30%;left:40%;"></div>
+          <div class="map-pin" style="top:55%;left:60%;background:var(--amber);"></div>
+          <div class="map-pin" style="top:70%;left:30%;background:var(--teal);"></div>
+          <div class="map-pin" style="top:20%;left:70%;background:var(--teal);"></div>
+        </div>
+
+        <div>
+          <div class="flex gap-2" style="flex-wrap:wrap;margin-bottom:14px;">
+            <input id="campSearch" class="input" type="search" placeholder="Search by camp or location…" style="flex:1;min-width:180px;" />
+          </div>
+          <div class="tabs" data-filter-group style="margin-bottom:16px;">
+            <button type="button" data-camp-filter="all" class="active">All</button>
+            <button type="button" data-camp-filter="available">Available</button>
+            <button type="button" data-camp-filter="limited">Limited</button>
+            <button type="button" data-camp-filter="full">Full</button>
+          </div>
+          <div class="grid" style="gap:16px;" id="campsList">
+            <!-- rendered from ResQStore.getAll("camps") by the page script below -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">All camps</div>
+          <h2>Full camp directory</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Camp</th><th>Location</th><th>Capacity</th><th>Status</th><th>Contact</th></tr></thead>
+            <tbody id="campsTableBody">
+              <!-- rendered from ResQStore.getAll("camps") by the page script below -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Camp details modal -->
+    <div class="modal-overlay" id="campDetailsModal">
+      <div class="modal">
+        <div class="modal-head">
+          <h3 id="campDetailsTitle">Camp</h3>
+          <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+        </div>
+        <div id="campDetailsBody"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color:#fff;"><span class="logo__mark">R</span>ResQConnect</a>
+          <p>A disaster response &amp; relief management platform connecting citizens, volunteers, NGOs, rescue teams, and administrators.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="alerts.html">Disaster Alerts</a>
+          <a href="safety.html">Safety Guidelines</a>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <a href="volunteer-registration.html">Volunteer</a>
+          <a href="donate.html">Donate</a>
+          <a href="register.html">Create Account</a>
+          <a href="login.html">Log In</a>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <a href="relief-camps.html">Relief Camps</a>
+          <a href="contacts.html">Emergency Contacts</a>
+          <a href="citizen-missing.html">Missing Persons</a>
+        </div>
+        <div>
+          <h4>Roles</h4>
+          <a href="citizen-dashboard.html">Citizen</a>
+          <a href="volunteer-dashboard.html">Volunteer</a>
+          <a href="ngo-dashboard.html">NGO</a>
+          <a href="rescue-dashboard.html">Rescue Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> ResQConnect. Built for resilience.</span>
+        <span class="footer-emergency mono">Emergency Helpline: 108</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Relief Camps page — derives availability/status from capacity and
+    // occupancy rather than hardcoding a label that could drift out of
+    // sync with the numbers (see project guidelines: "do not hardcode
+    // a contradictory availability number").
+    document.addEventListener("DOMContentLoaded", () => {
+      const list = document.getElementById("campsList");
+      const tableBody = document.getElementById("campsTableBody");
+      const intro = document.getElementById("campsIntro");
+      const searchInput = document.getElementById("campSearch");
+      const filterBtns = document.querySelectorAll("[data-camp-filter]");
+      const modal = document.getElementById("campDetailsModal");
+      if (!list || !window.ResQStore) return;
+
+      function statusFor(camp) {
+        const pct = camp.occupancy / camp.capacity;
+        if (pct >= 1) return { key: "full", label: "Full", badge: "badge-critical" };
+        if (pct >= 0.85) return { key: "limited", label: "Nearly Full", badge: "badge-warning" };
+        return { key: "available", label: "Open", badge: "badge-success" };
+      }
+
+      let activeFilter = "all";
+      let searchTerm = "";
+
+      function render() {
+        const camps = window.ResQStore.getAll("camps");
+        if (intro) intro.textContent = `${camps.length} camps are currently active nationwide. Capacity updates every time a camp logs an arrival or departure.`;
+
+        const filtered = camps.filter((c) => {
+          const status = statusFor(c);
+          const matchesFilter = activeFilter === "all" || status.key === activeFilter;
+          const haystack = (c.name + " " + c.location).toLowerCase();
+          const matchesSearch = !searchTerm || haystack.includes(searchTerm);
+          return matchesFilter && matchesSearch;
+        });
+
+        renderCollection({
+          container: list,
+          items: filtered,
+          rowTemplate: (c) => {
+            const status = statusFor(c);
+            const pct = Math.round((c.occupancy / c.capacity) * 100);
+            const fillClass = pct >= 85 ? "low" : pct >= 60 ? "mid" : "";
+            return `
+              <div class="card card-hover" data-camp-id="${c.id}" tabindex="0" role="button" aria-label="View details for ${c.name}">
+                <div class="flex justify-between items-center" style="margin-bottom:8px;">
+                  <h3 style="margin:0;font-size:15.5px;">${c.name}</h3>
+                  <span class="badge ${status.badge}">${status.label}</span>
+                </div>
+                <p style="margin-bottom:10px;font-size:13.5px;">${c.location}</p>
+                <div class="flex justify-between" style="font-size:12.5px;color:var(--ink-faint);margin-bottom:4px;">
+                  <span>Capacity</span><span>${c.occupancy}/${c.capacity}</span>
+                </div>
+                <div class="progress" style="margin-bottom:12px;"><div class="progress__fill ${fillClass}" data-fill="${pct}"></div></div>
+                <p style="margin:0;font-size:13px;"><strong>Available:</strong> ${c.facilities.join(", ")}</p>
+              </div>`;
+          },
+          emptyState: { title: "No camps found", description: "Try a different search or filter." }
+        });
+
+        list.querySelectorAll(".progress__fill").forEach((fill) => {
+          fill.style.width = fill.getAttribute("data-fill") + "%";
+        });
+
+        list.querySelectorAll("[data-camp-id]").forEach((card) => {
+          const open = () => openDetails(card.getAttribute("data-camp-id"));
+          card.addEventListener("click", open);
+          card.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+          });
+        });
+
+        if (tableBody) {
+          tableBody.innerHTML = filtered.map((c) => {
+            const status = statusFor(c);
+            return `<tr><td>${c.name}</td><td>${c.location}</td><td>${c.occupancy}/${c.capacity}</td><td><span class="badge ${status.badge}">${status.label}</span></td><td class="mono">${c.contact}</td></tr>`;
+          }).join("");
+        }
+      }
+
+      function openDetails(id) {
+        const camp = window.ResQStore.getById("camps", id);
+        if (!camp || !modal) return;
+        const status = statusFor(camp);
+        modal.querySelector("#campDetailsTitle").textContent = camp.name;
+        modal.querySelector("#campDetailsBody").innerHTML = `
+          <div class="flex justify-between items-center" style="margin-bottom:14px;">
+            <span class="badge ${status.badge}">${status.label}</span>
+            <span style="font-size:12.5px;color:var(--ink-faint);">${camp.occupancy}/${camp.capacity} occupied</span>
+          </div>
+          <p style="margin-bottom:6px;"><strong>Location:</strong> ${camp.location}</p>
+          <p style="margin-bottom:6px;"><strong>Available spaces:</strong> ${camp.capacity - camp.occupancy}</p>
+          <p style="margin-bottom:6px;"><strong>Facilities:</strong> ${camp.facilities.join(", ")}</p>
+          <p style="margin:0;"><strong>Contact:</strong> <span class="mono">${camp.contact}</span></p>
+        `;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filterBtns.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeFilter = btn.getAttribute("data-camp-filter");
+          render();
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener("input", () => {
+          searchTerm = searchInput.value.trim().toLowerCase();
+          render();
+        });
+      }
+
+      render();
+    });
+  </script>
+</body>
+</html>
