@@ -368,6 +368,16 @@
     return role.charAt(0).toUpperCase() + role.slice(1);
   }
 
+  function getDashboardForRole(role) {
+    if (!role) return "citizen-dashboard.html";
+    const r = String(role).toLowerCase().trim();
+    if (r === "admin" || r === "administrator") return "admin-dashboard.html";
+    if (r === "volunteer") return "volunteer-dashboard.html";
+    if (r === "ngo" || r === "ngo coordinator") return "ngo-dashboard.html";
+    if (r === "rescue" || r === "rescue team" || r === "rescueteam") return "rescue-dashboard.html";
+    return "citizen-dashboard.html";
+  }
+
   function getInitials(name) {
     if (!name || typeof name !== "string") return "U";
     const clean = name.trim();
@@ -386,6 +396,7 @@
     const role = user.role || user.userRole || "citizen";
     const roleLabel = formatRole(role);
     const initials = getInitials(name);
+    const targetDashboard = getDashboardForRole(role);
 
     // 1. Update user chip name
     document.querySelectorAll(".user-chip__name, [data-auth-name]").forEach((el) => {
@@ -448,6 +459,24 @@
     if (profileNameDisplay) profileNameDisplay.textContent = name;
     const profileRoleDisplay = getEl("pfRoleHeader") || (typeof document !== "undefined" && typeof document.querySelector === "function" ? document.querySelector(".card .flex.items-center p[style*='font-size:13px']") : null);
     if (profileRoleDisplay) profileRoleDisplay.textContent = `${roleLabel} · Active Member`;
+
+    // 8. Update Public Header / Navigation when logged in
+    document.querySelectorAll(".site-header .nav-actions a[href='login.html'], .site-header .nav-actions [data-auth-login-btn]").forEach((btn) => {
+      btn.setAttribute("href", targetDashboard);
+      btn.textContent = "Dashboard";
+      btn.setAttribute("data-auth-dash-btn", "true");
+    });
+
+    document.querySelectorAll(".site-header .nav-links a[href='login.html']").forEach((link) => {
+      link.setAttribute("href", targetDashboard);
+      link.textContent = "Dashboard";
+    });
+
+    const heroGetStarted = typeof document !== "undefined" && typeof document.querySelector === "function" ? document.querySelector(".hero-actions a[href='register.html'], .hero-actions a[href='login.html']") : null;
+    if (heroGetStarted) {
+      heroGetStarted.setAttribute("href", targetDashboard);
+      heroGetStarted.textContent = "Go to Dashboard";
+    }
   }
 
   function initAuthSession() {
@@ -456,7 +485,7 @@
       const loc = (typeof window !== "undefined" && window.location) ? window.location : (typeof location !== "undefined" ? location : { pathname: "index.html" });
       const cleanPath = (loc.pathname ? loc.pathname.split("/").pop() : "").split("?")[0].split("#")[0].toLowerCase();
       const filename = cleanPath || "index.html";
-      const isProtectedDashboard = /^(citizen|volunteer|rescue|ngo|admin)-/.test(filename);
+      const isProtectedDashboard = /^(citizen|volunteer|rescue|ngo|admin)-/.test(filename) && filename !== "volunteer-registration.html";
 
       if (isProtectedDashboard && !user) {
         if (typeof window !== "undefined" && window.location) {
@@ -466,32 +495,69 @@
       }
 
       if (user) {
+        const targetDashboard = getDashboardForRole(user.role);
+
+        // Dynamic Logo link routing for authenticated users: ensure logo always points to role dashboard
+        if (typeof document !== "undefined" && typeof document.querySelectorAll === "function") {
+          document.querySelectorAll("a.logo, a[data-auth-logo], .dash-topbar a.logo, .site-header a.logo, .footer-brand a.logo").forEach((logo) => {
+            logo.setAttribute("href", targetDashboard);
+            logo.onclick = (e) => {
+              e.preventDefault();
+              const currentLoc = (typeof window !== "undefined" && window.location && window.location.pathname ? window.location.pathname.split("/").pop() : "").split("?")[0].toLowerCase() || "index.html";
+              if (currentLoc !== targetDashboard.toLowerCase()) {
+                if (typeof window !== "undefined" && window.location) {
+                  window.location.href = targetDashboard;
+                }
+              }
+            };
+          });
+        }
+
         updateAuthHeader(user);
 
-        // 5. Wire up log out links
-        document.querySelectorAll("a[href='login.html']").forEach((link) => {
-          if (link.textContent.toLowerCase().includes("log out") || link.textContent.toLowerCase().includes("logout")) {
-            link.addEventListener("click", () => {
-              if (window.ResQStore && typeof window.ResQStore.clearCurrentUser === "function") {
-                window.ResQStore.clearCurrentUser();
-              }
-              try {
-                sessionStorage.removeItem("resq_current_user");
-                localStorage.removeItem("resq_current_user");
-                sessionStorage.removeItem("user");
-                localStorage.removeItem("user");
-              } catch (err) {}
-            });
-          }
-        });
+        // 5. Wire up explicit log out links only
+        if (typeof document !== "undefined" && typeof document.querySelectorAll === "function") {
+          document.querySelectorAll("a[href='login.html'], [data-auth-logout]").forEach((link) => {
+            if (link.textContent.toLowerCase().includes("log out") || link.textContent.toLowerCase().includes("logout")) {
+              link.addEventListener("click", () => {
+                if (window.ResQStore && typeof window.ResQStore.clearCurrentUser === "function") {
+                  window.ResQStore.clearCurrentUser();
+                }
+                try {
+                  sessionStorage.removeItem("resq_current_user");
+                  localStorage.removeItem("resq_current_user");
+                  sessionStorage.removeItem("user");
+                  localStorage.removeItem("user");
+                } catch (err) {}
+              });
+            }
+          });
+        }
+      } else {
+        // Unauthenticated visitors: ensure logo points to index.html
+        if (typeof document !== "undefined" && typeof document.querySelectorAll === "function") {
+          document.querySelectorAll("a.logo").forEach((logo) => {
+            logo.setAttribute("href", "index.html");
+          });
+        }
       }
     } catch (e) {
       console.warn("initAuthSession notice:", e);
     }
   }
 
+  function initFooterYear() {
+    const y = new Date().getFullYear();
+    if (typeof document !== "undefined" && typeof document.querySelectorAll === "function") {
+      document.querySelectorAll("[data-year]").forEach((el) => {
+        el.textContent = String(y);
+      });
+    }
+  }
+
   window.ResQAuth = {
     getAuthUser,
+    getDashboardForRole,
     initAuthSession,
     normalizeUserObject,
     getInitials,
