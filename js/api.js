@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  const API_BASE = window.RESQ_API_BASE || "http://localhost:5000/api";
+  const API_BASE = window.RESQ_API_BASE || "https://resqconnect-backend.onrender.com/api";
 
   async function request(endpoint, options = {}) {
     const url = `${API_BASE}${endpoint}`;
