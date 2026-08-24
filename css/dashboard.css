@@ -11,6 +11,13 @@
   display: grid;
   grid-template-columns: var(--sidebar-w) 1fr;
   min-height: calc(100vh - var(--ribbon-h));
+  width: 100%;
+  max-width: 100%;
+}
+
+#sidebarToggle { display: none; }
+@media (max-width: 980px) {
+  #sidebarToggle { display: inline-flex; }
 }
 
 .dash-topbar {
@@ -21,14 +28,14 @@
   background: var(--panel); border-bottom: 1px solid var(--line);
   position: sticky; top: var(--ribbon-h); z-index: 80;
 }
-.dash-topbar .logo { font-size: 17px; }
-.dash-topbar__right { display: flex; align-items: center; gap: var(--sp-3); }
+.dash-topbar .logo { font-size: 17px; flex-shrink: 0; }
+.dash-topbar__right { display: flex; align-items: center; gap: var(--sp-3); flex-shrink: 0; }
 .dash-topbar__search {
   display: flex; align-items: center; gap: var(--sp-2); background: var(--fog);
   border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 12px; width: 260px;
 }
 .dash-topbar__search input { border: none; background: none; outline: none; font-size: 13.5px; width: 100%; color: var(--ink); }
-@media (max-width: 900px) { .dash-topbar__search { display: none; } }
+@media (max-width: 900px) { .dash-topbar > .dash-topbar__search { display: none; } }
 
 .user-chip { display: flex; align-items: center; gap: var(--sp-2); padding: 4px 10px 4px 4px; border-radius: var(--radius-pill); border: 1px solid var(--line); background: var(--panel); }
 .avatar {
@@ -37,6 +44,19 @@
 }
 .user-chip__name { font-size: 13px; font-weight: 600; line-height: 1.2; }
 .user-chip__role { font-size: 11px; color: var(--ink-faint); line-height: 1.2; }
+
+@media (max-width: 640px) {
+  .dash-topbar { padding: 0 var(--sp-3); }
+  .dash-topbar .logo { font-size: 15px; }
+  .dash-topbar__right { gap: var(--sp-2); }
+  .dash-topbar__right .icon-btn { width: 36px; height: 36px; }
+  .user-chip__role { display: none; }
+}
+
+@media (max-width: 480px) {
+  .user-chip__name { display: none; }
+  .user-chip { padding: 3px; }
+}
 
 /* --------------------------------------------------------------------------
    2. SIDEBAR
@@ -77,8 +97,9 @@
   .dash-sidebar {
     grid-column: auto;
     grid-row: auto;
-    position: fixed; top: calc(var(--header-h) + var(--ribbon-h)); left: 0; bottom: 0; width: var(--sidebar-w);
+    position: fixed; top: calc(var(--header-h) + var(--ribbon-h)); left: 0; bottom: 0; width: min(var(--sidebar-w), 80vw);
     transform: translateX(-100%); z-index: 95; box-shadow: var(--shadow-lg);
+    -webkit-overflow-scrolling: touch;
   }
   .dash-sidebar.open { transform: translateX(0); }
   .sidebar-scrim {
@@ -96,16 +117,21 @@
   grid-row: 2;
   padding: var(--sp-6);
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 @media (max-width: 980px) {
   .dash-content {
     grid-column: 1;
     grid-row: 2;
+    padding: var(--sp-5) var(--sp-4);
   }
 }
 @media (max-width: 640px) {
   .dash-content { padding: var(--sp-4) var(--sp-3); }
-  .dash-head { margin-bottom: var(--sp-4); }
+  .dash-head { flex-direction: column; align-items: stretch; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+  .dash-head > div:last-child { width: 100%; display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+  .dash-head .dash-topbar__search { width: 100% !important; max-width: 100%; }
   .dash-head h1 { font-size: 20px; }
 }
 .dash-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--sp-6); flex-wrap: wrap; gap: var(--sp-3); }
@@ -130,9 +156,13 @@
    5. CHART PLACEHOLDER (paired with Recharts-style bars drawn in pure CSS)
    -------------------------------------------------------------------------- */
 .chart-card .chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-5); }
-.bar-chart { display: flex; align-items: flex-end; gap: var(--sp-3); height: 180px; padding-top: var(--sp-4); }
+.bar-chart { display: flex; align-items: flex-end; gap: var(--sp-3); height: 180px; padding-top: var(--sp-4); padding-bottom: 24px; }
 .bar-chart .bar { flex: 1; background: linear-gradient(180deg, var(--teal), color-mix(in srgb, var(--teal) 55%, transparent)); border-radius: 6px 6px 0 0; position: relative; min-height: 6px; }
 .bar-chart .bar span { position: absolute; bottom: -22px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--ink-faint); }
+@media (max-width: 480px) {
+  .bar-chart { gap: var(--sp-1); height: 160px; }
+  .bar-chart .bar span { font-size: 10px; }
+}
 .donut-legend { display: flex; flex-direction: column; gap: var(--sp-3); }
 .donut-legend li { display: flex; align-items: center; gap: var(--sp-2); font-size: 13.5px; }
 .donut-legend .sw { width: 10px; height: 10px; border-radius: 3px; }
@@ -152,7 +182,7 @@
 .task-card .meta { display: flex; gap: var(--sp-4); font-size: 12.5px; color: var(--ink-faint); flex-wrap: wrap; }
 .task-card .meta span { display: inline-flex; align-items: center; gap: 4px; }
 .task-card .id { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); }
-.task-card__foot { display: flex; justify-content: space-between; align-items: center; margin-top: var(--sp-2); }
+.task-card__foot { display: flex; justify-content: space-between; align-items: center; margin-top: var(--sp-2); flex-wrap: wrap; gap: var(--sp-2); }
 
 /* --------------------------------------------------------------------------
    7. LIST ROW (notifications, missing persons, requests)
@@ -176,10 +206,19 @@
 /* --------------------------------------------------------------------------
    9. TABS
    -------------------------------------------------------------------------- */
-.tabs { display: flex; gap: var(--sp-2); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-5); }
+.tabs {
+  display: flex;
+  gap: var(--sp-2);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--sp-5);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
 .tabs button {
   background: none; border: none; padding: var(--sp-3) var(--sp-2); font-size: 14px; font-weight: 500;
   color: var(--ink-faint); border-bottom: 2px solid transparent; margin-bottom: -1px;
+  flex-shrink: 0; white-space: nowrap;
 }
 .tabs button.active { color: var(--teal); border-color: var(--teal); font-weight: 600; }
 
@@ -208,7 +247,7 @@
 .dash-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
 .dash-grid.split { grid-template-columns: 2fr 1fr; }
 @media (max-width: 1100px) { .dash-grid.cols-4 { grid-template-columns: repeat(2, 1fr); } .dash-grid.split { grid-template-columns: 1fr; } }
-@media (max-width: 700px) { .dash-grid.cols-4, .dash-grid.cols-3, .dash-grid.cols-2 { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .dash-grid.cols-4, .dash-grid.cols-3, .dash-grid.cols-2 { grid-template-columns: 1fr; gap: var(--sp-3); } }
 
 /* --------------------------------------------------------------------------
    12. DASHBOARD FOOTER — compact footer inside the content column
