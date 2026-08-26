@@ -74,9 +74,9 @@
     if (!item) return item;
     const res = Object.assign({}, item);
 
-    // Ensure id exists
-    res.id = item.id || item._id || item.caseId || item.taskId || item.itemId || item.distributionId || item.reportId || item.referenceNumber || genId(collection);
-    res._id = item._id || res.id;
+    // Ensure id exists with preference for domain reference codes
+    res.id = item.reportId || item.referenceNumber || item.caseId || item.taskId || item.itemId || item.distributionId || item.id || (item._id ? item._id.toString() : null) || genId(collection);
+    res._id = item._id ? item._id.toString() : res.id;
 
     if (collection === "camps") {
       res.contact = res.contact || "";
@@ -104,6 +104,22 @@
     } else if (collection === "users") {
       res.status = item.isActive !== undefined ? (item.isActive ? "active" : "suspended") : (res.status || "active");
       res.joined = item.createdAt ? new Date(item.createdAt).toLocaleDateString("en-IN", { month: "short", year: "numeric" }) : (res.joined || "Aug 2026");
+    } else if (collection === "missingPersons") {
+      res.name = item.personName || item.name || "Unknown";
+      res.personName = res.name;
+      res.age = item.age !== undefined && item.age !== null ? Number(item.age) : 0;
+      res.gender = item.gender || "Other";
+      res.lastSeen = item.lastSeenLocation || item.lastSeen || item.location || "Unknown Location";
+      res.lastSeenLocation = res.lastSeen;
+      res.lastSeenAt = item.lastSeenAt || item.createdAt || new Date().toISOString();
+      res.description = item.description || "";
+      res.photo = item.photo || null;
+      res.status = item.status || "reported";
+      res.contactName = item.contactName || (item.citizenId && item.citizenId.name) || "";
+      res.contactPhone = item.contactPhone || (item.citizenId && item.citizenId.phone) || "";
+      res.filedBy = (item.citizenId && item.citizenId.name) || item.filedBy || res.contactName || "Citizen";
+      res.citizenId = (item.citizenId && (item.citizenId._id || item.citizenId.id)) || item.citizenId || null;
+      res.createdAt = item.createdAt || res.createdAt || new Date().toISOString();
     } else if (collection === "notifications") {
       res.read = item.isRead !== undefined ? item.isRead : (item.read !== undefined ? item.read : (res.read || false));
       res.message = item.message || item.title || res.message;
@@ -316,6 +332,33 @@
                 Object.assign(record, normalizeItem("reports", res.data));
                 notify(collection);
               }
+            } else if (collection === "missingPersons") {
+              res = await window.ResQApi.missingPersons.create({
+                name: item.name || item.personName,
+                personName: item.personName || item.name,
+                age: item.age,
+                gender: item.gender,
+                lastSeen: item.lastSeen || item.lastSeenLocation,
+                lastSeenLocation: item.lastSeenLocation || item.lastSeen,
+                lastSeenAt: item.lastSeenAt,
+                description: item.description || "",
+                photo: item.photo || null,
+                contactName: item.contactName || (currentUser && currentUser.name) || "",
+                contactPhone: item.contactPhone || (currentUser && currentUser.phone) || "",
+                citizenId: (currentUser && (currentUser._id || currentUser.id)) || item.citizenId || null,
+                status: item.status || "reported",
+              });
+              if (res && res.data) {
+                Object.assign(record, normalizeItem("missingPersons", res.data));
+                notify(collection);
+                try {
+                  const notifsRes = await window.ResQApi.notifications.getAll();
+                  if (notifsRes && notifsRes.data && notifsRes.data.length > 0) {
+                    state.notifications = notifsRes.data.map((n) => normalizeItem("notifications", n));
+                    notify("notifications");
+                  }
+                } catch (nErr) {}
+              }
             } else if (collection === "users") {
               res = await window.ResQApi.auth.register({
                 name: item.name,
@@ -402,6 +445,21 @@
               } else {
                 await window.ResQApi.reports.update(targetId, patch);
               }
+            } else if (collection === "missingPersons") {
+              if (patch.status === "found") {
+                await window.ResQApi.missingPersons.markFound(targetId);
+              } else if (patch.status) {
+                await window.ResQApi.missingPersons.updateStatus(targetId, patch.status);
+              } else {
+                await window.ResQApi.missingPersons.update(targetId, patch);
+              }
+              try {
+                const notifsRes = await window.ResQApi.notifications.getAll();
+                if (notifsRes && notifsRes.data && notifsRes.data.length > 0) {
+                  state.notifications = notifsRes.data.map((n) => normalizeItem("notifications", n));
+                  notify("notifications");
+                }
+              } catch (nErr) {}
             } else if (collection === "users") {
               const userPatch = Object.assign({}, patch);
               if (patch.status) userPatch.isActive = patch.status === "active";
@@ -440,6 +498,7 @@
               else if (collection === "tasks") await window.ResQApi.tasks.delete(targetId);
               else if (collection === "inventory") await window.ResQApi.inventory.delete(targetId);
               else if (collection === "reports") await window.ResQApi.reports.delete(targetId);
+              else if (collection === "missingPersons") await window.ResQApi.missingPersons.delete(targetId);
               else if (collection === "users") await window.ResQApi.users.delete(targetId);
               else if (collection === "notifications") await window.ResQApi.notifications.delete(targetId);
             } catch (err) {
@@ -521,19 +580,24 @@
     async syncWithBackend() {
       if (!window.ResQApi) return;
       try {
+        const currentUser = (window.ResQAuth && window.ResQAuth.getAuthUser()) || this.getCurrentUser();
+        const role = currentUser ? currentUser.role : undefined;
+        const userId = currentUser ? (currentUser._id || currentUser.id) : undefined;
+
         const results = await Promise.allSettled([
           window.ResQApi.camps.getAll(),
           window.ResQApi.tasks.getAll(),
           window.ResQApi.inventory.getAll(),
           window.ResQApi.distributions.getAll(),
-          window.ResQApi.reports.getAll(),
+          window.ResQApi.reports.getAll({ role, userId }),
+          window.ResQApi.missingPersons.getAll({ role, userId }),
           window.ResQApi.rescueCases.getAll(),
           window.ResQApi.sos.getAll(),
           window.ResQApi.users.getAll(),
           window.ResQApi.notifications.getAll(),
         ]);
 
-        const [campsRes, tasksRes, invRes, distRes, reportsRes, casesRes, sosRes, usersRes, notifsRes] = results;
+        const [campsRes, tasksRes, invRes, distRes, reportsRes, missingRes, casesRes, sosRes, usersRes, notifsRes] = results;
 
         if (campsRes.status === "fulfilled" && campsRes.value.data && campsRes.value.data.length > 0) {
           state.camps = campsRes.value.data.map((c) => normalizeItem("camps", c));
@@ -554,6 +618,10 @@
         if (reportsRes.status === "fulfilled" && reportsRes.value.data && reportsRes.value.data.length > 0) {
           state.reports = reportsRes.value.data.map((r) => normalizeItem("reports", r));
           notify("reports");
+        }
+        if (missingRes.status === "fulfilled" && missingRes.value.data && missingRes.value.data.length > 0) {
+          state.missingPersons = missingRes.value.data.map((m) => normalizeItem("missingPersons", m));
+          notify("missingPersons");
         }
         if (casesRes.status === "fulfilled" && casesRes.value.data && casesRes.value.data.length > 0) {
           state.cases = casesRes.value.data.map((c) => normalizeItem("cases", c));
@@ -611,6 +679,7 @@
     return `${prefix}-${year}-${rand}`;
   }
   ResQStore.genId = genId;
+  ResQStore.normalizeItem = normalizeItem;
 
   // Auto-init backend sync on load
   if (typeof window !== "undefined") {

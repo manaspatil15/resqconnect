@@ -39,8 +39,54 @@ const reportSchema = new mongoose.Schema(
 
         status: {
             type: String,
-            enum: ["pending", "verified", "rejected"],
+            enum: ["pending", "verified", "rejected", "reported", "investigating", "found", "closed"],
             default: "pending",
+        },
+
+        // Missing Person Specific Fields
+        personName: {
+            type: String,
+            trim: true,
+            default: null,
+        },
+
+        age: {
+            type: Number,
+            default: null,
+        },
+
+        gender: {
+            type: String,
+            enum: ["Male", "Female", "Other", "Unknown"],
+            default: null,
+        },
+
+        lastSeenLocation: {
+            type: String,
+            trim: true,
+            default: null,
+        },
+
+        lastSeenAt: {
+            type: Date,
+            default: null,
+        },
+
+        photo: {
+            type: String,
+            default: null,
+        },
+
+        contactName: {
+            type: String,
+            trim: true,
+            default: null,
+        },
+
+        contactPhone: {
+            type: String,
+            trim: true,
+            default: null,
         },
 
         verifiedBy: {

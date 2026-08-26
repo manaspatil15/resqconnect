@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Missing Persons — Admin — ResQConnect</title>
+  <meta name="description" content="Manage, track, and verify missing persons cases." />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("resqconnect_theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="alert-ribbon" role="status" aria-label="Active disaster alerts">
+    <div class="alert-ribbon__label">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="txt"><span id="ribbonCount">4</span> Active Alerts</span>
+    </div>
+    <div class="alert-ribbon__track" id="ribbonTrack">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a href="admin-dashboard.html" class="logo"><span class="logo__mark">R</span>ResQConnect</a>
+      </div>
+      <div class="dash-topbar__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search ResQConnect..." aria-label="Search" />
+      </div>
+      <div class="dash-topbar__right">
+        <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="popover-wrap">
+          <button class="icon-btn" data-popover-trigger data-target="notifPopover" aria-label="Notifications" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-dot" aria-hidden="true"></span>
+          </button>
+          <div class="popover" id="notifPopover"></div>
+        </div>
+        <div class="popover-wrap">
+          <button class="user-chip" data-popover-trigger data-target="userPopover">
+            <span class="avatar" data-auth-avatar>U</span>
+            <span><span class="user-chip__name" data-auth-name style="display:block;">User</span><span class="user-chip__role" data-auth-role style="display:block;">Administrator</span></span>
+          </button>
+          <div class="popover" id="userPopover" style="width:200px;">
+            <div class="popover-item"><p><a href="admin-dashboard.html">View profile</a></p></div>
+            <div class="popover-item"><p><a href="login.html">Log out</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-role">Admin Panel</div>
+      <nav class="sidebar-nav">
+        <a href="admin-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M4 10v10h16V10"/></svg>Dashboard</a>
+        <a href="admin-users.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users</a>
+        <a href="admin-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Reports</a>
+        <a href="admin-missing.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4a4 4 0 100 8 4 4 0 000-8zM3 21v-2a4 4 0 014-4h4M16 11l2 2 4-4"/></svg>Missing Persons</a>
+        <a href="admin-camps.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2zM12 12v4"/></svg>Relief Camps</a>
+        <a href="admin-resources.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Resources</a>
+        <a href="admin-volunteers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11a4 4 0 100-8 4 4 0 000 8zM1 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M17 11a4 4 0 010-8M23 21v-2a4 4 0 00-4-4"/></svg>Volunteers</a>
+        <a href="admin-analytics.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Analytics</a>
+      </nav>
+      <hr class="divider" />
+      <div class="sidebar-foot">
+        <p>Need urgent help?</p>
+        <a href="citizen-sos.html" class="btn btn-emergency btn-sm btn-block">Send SOS</a>
+      </div>
+    </aside>
+
+    <div class="dash-content">
+      <div class="breadcrumb">Admin / Missing Persons</div>
+      <div class="dash-head">
+        <div><h1>Missing Persons Management</h1><p id="missingSubtitle">Manage, track, and resolve missing persons reports across all operational zones.</p></div>
+      </div>
+
+      <div class="dash-grid cols-4" style="margin-bottom:28px;">
+        <div class="card stat-card">
+          <div class="stat-card__top"><div class="stat-card__icon" style="background:var(--teal-bg);color:var(--teal);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg></div></div>
+          <b id="statTotal" data-count-to="0">0</b>
+          <span class="label">Total Cases</span>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-card__top"><div class="stat-card__icon" style="background:var(--amber-bg);color:#A15E00;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div></div>
+          <b id="statSearching" data-count-to="0">0</b>
+          <span class="label">Actively Searching</span>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-card__top"><div class="stat-card__icon" style="background:var(--green-bg);color:var(--green);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg></div></div>
+          <b id="statFound" data-count-to="0">0</b>
+          <span class="label">Found Safe</span>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-card__top"><div class="stat-card__icon" style="background:var(--alert-bg);color:var(--alert);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+          <b id="statReported" data-count-to="0">0</b>
+          <span class="label">Pending Review</span>
+        </div>
+      </div>
+
+      <div class="dash-topbar__search w-full" style="width:100%;max-width:360px;margin-bottom:14px;">
+        <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="adminMissingSearch" placeholder="Search by name, case ID, or location…" />
+      </div>
+
+      <div class="tabs" data-filter-group style="margin-bottom:16px;">
+        <button type="button" data-status-filter="all" class="active">All</button>
+        <button type="button" data-status-filter="reported">Reported</button>
+        <button type="button" data-status-filter="investigating">Searching</button>
+        <button type="button" data-status-filter="found">Found</button>
+        <button type="button" data-status-filter="closed">Closed</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Case ID</th>
+              <th>Person Name</th>
+              <th>Age / Gender</th>
+              <th>Last Seen Location</th>
+              <th>Report Date</th>
+              <th>Reporter</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminMissingTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Details Modal -->
+      <div class="modal-overlay" id="adminMissingDetailsModal">
+        <div class="modal" style="max-width:540px;">
+          <div class="modal-head">
+            <h3 id="adminModalTitle" style="margin:0;">Case Details</h3>
+            <button class="modal-close" data-modal-close aria-label="Close">&times;</button>
+          </div>
+          <div id="adminModalBody" style="padding:16px 0;"></div>
+        </div>
+      </div>
+
+      <!-- Status Update Modal -->
+      <div class="modal-overlay" id="adminStatusModal">
+        <div class="modal" style="max-width:400px;">
+          <div class="modal-head">
+            <h3 style="margin:0;">Update Case Status</h3>
+            <button class="modal-close" data-modal-close aria-label="Close">&times;</button>
+          </div>
+          <form id="statusUpdateForm" style="padding-top:14px;">
+            <input type="hidden" id="statusCaseId" />
+            <div class="field">
+              <label for="statusSelect">Select New Status</label>
+              <select id="statusSelect" class="select">
+                <option value="reported">Reported (Pending Review)</option>
+                <option value="investigating">Searching (Active Investigation)</option>
+                <option value="found">Found (Resolved Safe)</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Save Status</button>
+          </form>
+        </div>
+      </div>
+
+      <footer class="dash-footer">
+        <span>&copy; <span data-year>2026</span> ResQConnect</span>
+        <span class="footer-emergency">Emergency Helpline: 108</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/mock/store.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/confirm-dialog.js"></script>
+  <script src="js/ui/render-table.js"></script>
+  <script src="js/ui/empty-state.js"></script>
+  <script src="js/ui/demo-form.js"></script>
+  <script src="js/ui/file-preview.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tableBody = document.getElementById("adminMissingTableBody");
+      const searchInput = document.getElementById("adminMissingSearch");
+      const filterBtns = document.querySelectorAll("[data-status-filter]");
+      const detailsModal = document.getElementById("adminMissingDetailsModal");
+      const statusModal = document.getElementById("adminStatusModal");
+      const statusForm = document.getElementById("statusUpdateForm");
+      if (!tableBody || !window.ResQStore) return;
+
+      const STATUS_LABEL = { reported: "Reported", investigating: "Searching", found: "Found", closed: "Closed" };
+      const STATUS_BADGE = { reported: "badge-warning", investigating: "badge-watch", found: "badge-success", closed: "badge-neutral" };
+
+      let activeFilter = "all";
+      let searchTerm = "";
+
+      function updateStats(items) {
+        const total = items.length;
+        const searching = items.filter((p) => p.status === "investigating").length;
+        const found = items.filter((p) => p.status === "found").length;
+        const reported = items.filter((p) => p.status === "reported" || p.status === "pending").length;
+
+        const statTotal = document.getElementById("statTotal");
+        const statSearching = document.getElementById("statSearching");
+        const statFound = document.getElementById("statFound");
+        const statReported = document.getElementById("statReported");
+
+        if (statTotal) statTotal.textContent = total;
+        if (statSearching) statSearching.textContent = searching;
+        if (statFound) statFound.textContent = found;
+        if (statReported) statReported.textContent = reported;
+      }
+
+      function render() {
+        const all = window.ResQStore.getAll("missingPersons");
+        updateStats(all);
+
+        const filtered = all.filter((p) => {
+          const matchesStatus = activeFilter === "all" || p.status === activeFilter;
+          const haystack = (
+            (p.name || p.personName || "") + " " +
+            (p.id || p.reportId || "") + " " +
+            (p.lastSeen || p.lastSeenLocation || "") + " " +
+            (p.filedBy || p.contactName || "")
+          ).toLowerCase();
+          const matchesSearch = !searchTerm || haystack.includes(searchTerm);
+          return matchesStatus && matchesSearch;
+        });
+
+        renderCollection({
+          container: tableBody,
+          items: filtered,
+          rowTemplate: (p) => {
+            const caseId = p.id || p.reportId;
+            const pName = p.name || p.personName || "Unknown";
+            const reporterDisplay = p.contactName || p.filedBy || (p.citizenId && (p.citizenId.name || p.citizenId.email)) || "Citizen";
+            const reporterContact = p.contactPhone || (p.citizenId && p.citizenId.phone) || (p.citizenId && p.citizenId.email) || "";
+            const lastSeenDate = p.lastSeenAt ? new Date(p.lastSeenAt).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }) : "Recent";
+
+            return `
+              <tr data-case-id="${caseId}">
+                <td>
+                  ${p.photo ? `<img src="${p.photo}" alt="" style="width:36px;height:36px;border-radius:6px;object-fit:cover;">` : `<span class="avatar" style="width:36px;height:36px;font-size:12px;">${pName.split(" ").map((n) => n[0]).slice(0, 2).join("")}</span>`}
+                </td>
+                <td class="mono font-semibold">${caseId}</td>
+                <td><strong>${pName}</strong></td>
+                <td>${p.age ? `${p.age} yrs` : "—"} · ${p.gender || "—"}</td>
+                <td>${p.lastSeen || p.lastSeenLocation || "—"}</td>
+                <td>${lastSeenDate}</td>
+                <td>
+                  <div>${reporterDisplay}</div>
+                  ${reporterContact ? `<span style="font-size:11px;color:var(--ink-faint);">${reporterContact}</span>` : ""}
+                </td>
+                <td>
+                  <span class="badge ${STATUS_BADGE[p.status] || "badge-neutral"}">${STATUS_LABEL[p.status] || p.status}</span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-1">
+                    <button type="button" class="btn btn-outline btn-xs" data-action="view" data-id="${caseId}">Details</button>
+                    <button type="button" class="btn btn-outline btn-xs" data-action="status" data-id="${caseId}" title="Change status">Status</button>
+                    ${p.status !== "found" ? `<button type="button" class="btn btn-success btn-xs" data-action="mark-found" data-id="${caseId}">Mark Found</button>` : ""}
+                    <button type="button" class="icon-btn" data-action="delete" data-id="${caseId}" title="Delete Case" style="color:var(--alert);padding:4px;">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          },
+          emptyState: { title: "No missing-person cases found", description: "No cases match your filter or search criteria." }
+        });
+
+        // Wire Action Buttons
+        tableBody.querySelectorAll("[data-action]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const action = btn.getAttribute("data-action");
+            const id = btn.getAttribute("data-id");
+
+            if (action === "view") openDetails(id);
+            else if (action === "status") openStatusModal(id);
+            else if (action === "mark-found") markFound(id);
+            else if (action === "delete") deleteCase(id);
+          });
+        });
+      }
+
+      function openDetails(id) {
+        const p = window.ResQStore.getById("missingPersons", id);
+        if (!p || !detailsModal) return;
+
+        const pName = p.name || p.personName || "Unknown";
+        const reporterDisplay = p.contactName || p.filedBy || (p.citizenId && p.citizenId.name) || "Citizen";
+        const reporterPhone = p.contactPhone || (p.citizenId && p.citizenId.phone) || "Not provided";
+        const reporterEmail = (p.citizenId && p.citizenId.email) || "Not provided";
+
+        detailsModal.querySelector("#adminModalTitle").textContent = `${pName} (${p.id || p.reportId})`;
+        detailsModal.querySelector("#adminModalBody").innerHTML = `
+          <div class="flex justify-between items-center" style="margin-bottom:14px;">
+            <span class="badge ${STATUS_BADGE[p.status] || "badge-neutral"}" style="font-size:13px;">${STATUS_LABEL[p.status] || p.status}</span>
+            <span class="mono" style="font-size:12px;color:var(--ink-faint);">${p.id || p.reportId}</span>
+          </div>
+          ${p.photo ? `<img src="${p.photo}" alt="" style="width:100%;max-height:240px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:14px;">` : ""}
+          <div style="background:var(--fog);padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:14px;">
+            <h4 style="margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-faint);">Person Details</h4>
+            <p style="margin:0 0 4px;"><strong>Age:</strong> ${p.age || "Unknown"} · <strong>Gender:</strong> ${p.gender || "Other"}</p>
+            <p style="margin:0 0 4px;"><strong>Last Seen Location:</strong> ${p.lastSeen || p.lastSeenLocation || "—"}</p>
+            <p style="margin:0;"><strong>Last Seen At:</strong> ${p.lastSeenAt ? new Date(p.lastSeenAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "—"}</p>
+          </div>
+          <div style="margin-bottom:14px;">
+            <h4 style="margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-faint);">Physical Description & Notes</h4>
+            <p style="margin:0;color:var(--ink);">${p.description || "No specific physical description provided."}</p>
+          </div>
+          <div style="background:var(--fog);padding:12px 14px;border-radius:var(--radius-sm);border-left:3px solid var(--primary);">
+            <h4 style="margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-faint);">Reporter & Contact Information</h4>
+            <p style="margin:0 0 4px;"><strong>Reported by:</strong> ${reporterDisplay}</p>
+            <p style="margin:0 0 4px;"><strong>Contact Phone:</strong> <a href="tel:${reporterPhone}">${reporterPhone}</a></p>
+            <p style="margin:0;"><strong>Email:</strong> <a href="mailto:${reporterEmail}">${reporterEmail}</a></p>
+          </div>
+        `;
+        detailsModal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function openStatusModal(id) {
+        const p = window.ResQStore.getById("missingPersons", id);
+        if (!p || !statusModal) return;
+        document.getElementById("statusCaseId").value = id;
+        document.getElementById("statusSelect").value = p.status || "reported";
+        statusModal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function markFound(id) {
+        const p = window.ResQStore.getById("missingPersons", id);
+        if (!p) return;
+        window.ResQStore.update("missingPersons", id, { status: "found" });
+        showToast({ type: "success", message: `Case ${id} marked as Found. Notifications broadcast.` });
+        render();
+      }
+
+      function deleteCase(id) {
+        const doDelete = () => {
+          window.ResQStore.remove("missingPersons", id);
+          showToast({ type: "info", message: `Case ${id} deleted.` });
+          render();
+        };
+
+        if (window.showConfirmDialog) {
+          showConfirmDialog({
+            title: "Delete Missing Person Case?",
+            message: `Are you sure you want to permanently delete case ${id}? This action cannot be undone.`,
+            confirmLabel: "Delete Case",
+            danger: true,
+            onConfirm: doDelete
+          });
+        } else if (confirm(`Delete case ${id}?`)) {
+          doDelete();
+        }
+      }
+
+      if (statusForm) {
+        statusForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const id = document.getElementById("statusCaseId").value;
+          const newStatus = document.getElementById("statusSelect").value;
+          window.ResQStore.update("missingPersons", id, { status: newStatus });
+          statusModal.classList.remove("open");
+          document.body.style.overflow = "";
+          showToast({ type: "success", message: `Case ${id} updated to "${STATUS_LABEL[newStatus] || newStatus}".` });
+          render();
+        });
+      }
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filterBtns.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeFilter = btn.getAttribute("data-status-filter");
+          render();
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener("input", () => {
+          searchTerm = searchInput.value.trim().toLowerCase();
+          render();
+        });
+      }
+
+      render();
+      if (typeof window.ResQStore.subscribe === "function") {
+        window.ResQStore.subscribe("missingPersons", render);
+      }
+    });
+  </script>
+</body>
+</html>

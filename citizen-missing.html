@@ -305,15 +305,26 @@
               }
             }
 
+            const currentUser = (window.ResQAuth && window.ResQAuth.getAuthUser()) ||
+                                (window.ResQStore && window.ResQStore.getCurrentUser());
+            const citizenId = currentUser ? (currentUser._id || currentUser.id) : null;
+            const contactName = currentUser ? currentUser.name : null;
+            const contactPhone = currentUser ? currentUser.phone : null;
+
             const record = window.ResQStore.add("missingPersons", {
               name: nameVal,
+              personName: nameVal,
               age: ageVal,
               gender: genderVal,
               lastSeen: lastVal,
+              lastSeenLocation: lastVal,
               lastSeenAt: parsedDate,
               description: descVal,
               status: "reported",
-              photo: photoUrl
+              photo: photoUrl,
+              citizenId: citizenId,
+              contactName: contactName,
+              contactPhone: contactPhone
             });
 
             form.reset();
@@ -331,11 +342,10 @@
         });
       }
 
+      render();
       if (window.ResQStore && typeof window.ResQStore.subscribe === "function") {
         window.ResQStore.subscribe("missingPersons", render);
       }
-
-      render();
     });
   </script>
 </body>

@@ -159,6 +159,17 @@
       delete: (id) => request(`/reports/${id}`, { method: "DELETE" }),
     },
 
+    // Missing Persons (Citizen, Responders & Admin)
+    missingPersons: {
+      getAll: (params) => request(`/reports/missing-persons${buildQuery(params)}`),
+      getById: (id, params) => request(`/reports/${id}${buildQuery(params)}`),
+      create: (data) => request("/reports/missing-persons", { method: "POST", body: data }),
+      updateStatus: (id, status) => request(`/reports/${id}/status`, { method: "PATCH", body: { status } }),
+      markFound: (id) => request(`/reports/${id}/found`, { method: "PATCH" }),
+      update: (id, data) => request(`/reports/${id}`, { method: "PUT", body: data }),
+      delete: (id) => request(`/reports/${id}`, { method: "DELETE" }),
+    },
+
     // Notifications
     notifications: {
       getAll: (params) => request(`/notifications${buildQuery(params)}`),
