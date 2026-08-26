@@ -6,7 +6,15 @@
 (function () {
   "use strict";
 
-  const API_BASE = window.RESQ_API_BASE || "https://resqconnect-backend.onrender.com/api";
+  const getApiBase = () => {
+    if (window.RESQ_API_BASE) return window.RESQ_API_BASE;
+    if (typeof window !== "undefined" && window.location && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.port === "5000")) {
+      return `${window.location.protocol}//${window.location.hostname}:5000/api`;
+    }
+    return "https://resqconnect-backend.onrender.com/api";
+  };
+
+  const API_BASE = getApiBase();
 
   async function request(endpoint, options = {}) {
     const url = `${API_BASE}${endpoint}`;

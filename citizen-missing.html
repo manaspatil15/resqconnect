@@ -135,9 +135,9 @@
 
       <!-- Missing person details modal -->
       <div class="modal-overlay" id="missingDetailsModal">
-        <div class="modal">
+        <div class="modal" style="max-height:90vh;display:flex;flex-direction:column;">
           <div class="modal-head"><h3 id="missingDetailsTitle" style="margin:0;">Case</h3><button class="modal-close" data-modal-close aria-label="Close">&times;</button></div>
-          <div id="missingDetailsBody"></div>
+          <div id="missingDetailsBody" style="overflow-y:auto;max-height:75vh;padding-right:4px;"></div>
         </div>
       </div>
       <footer class="dash-footer">
@@ -218,18 +218,47 @@
       function openDetails(id) {
         const p = window.ResQStore.getById("missingPersons", id);
         if (!p || !detailsModal) return;
+
+        const isActionable = p.status !== "found" && p.status !== "closed";
+
         detailsModal.querySelector("#missingDetailsTitle").textContent = p.name;
         detailsModal.querySelector("#missingDetailsBody").innerHTML = `
           <div class="flex justify-between items-center" style="margin-bottom:14px;">
             <span class="badge ${STATUS_BADGE[p.status] || "badge-neutral"}">${STATUS_LABEL[p.status] || p.status}</span>
             <span class="mono" style="font-size:12px;color:var(--ink-faint);">${p.id}</span>
           </div>
+
+          ${isActionable ? `
+            <div style="margin-bottom:16px;">
+              <button type="button" class="btn btn-emergency btn-block" id="markFoundBtn" style="font-weight:600;padding:12px 16px;background:var(--teal, #0d9488);border-color:var(--teal, #0d9488);color:#ffffff;box-shadow:var(--shadow-sm);">
+                ✓ Person Found / Close Report
+              </button>
+            </div>
+          ` : ""}
+
           ${p.photo ? `<img src="${p.photo}" alt="" style="width:100%;max-height:220px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:14px;">` : ""}
           <p style="margin-bottom:6px;"><strong>Age:</strong> ${p.age} · <strong>Gender:</strong> ${p.gender}</p>
           <p style="margin-bottom:6px;"><strong>Last seen:</strong> ${p.lastSeen}</p>
-          <p style="margin-bottom:6px;"><strong>Last seen at:</strong> ${new Date(p.lastSeenAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</p>
-          <p style="margin:0;">${p.description || "No additional description provided."}</p>
+          <p style="margin-bottom:12px;"><strong>Last seen at:</strong> ${new Date(p.lastSeenAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</p>
+          <div style="background:rgba(255,255,255,0.05);padding:12px;border-radius:6px;font-size:13.5px;line-height:1.5;">
+            <strong>Description / Circumstances:</strong>
+            <p style="margin:4px 0 0 0;">${p.description || "No additional description provided."}</p>
+          </div>
         `;
+
+        const markFoundBtn = detailsModal.querySelector("#markFoundBtn");
+        if (markFoundBtn) {
+          markFoundBtn.addEventListener("click", () => {
+            window.ResQStore.update("missingPersons", p.id, { status: "found" });
+            detailsModal.classList.remove("open");
+            document.body.style.overflow = "";
+            render();
+            if (typeof showToast === "function") {
+              showToast({ type: "success", message: `Missing person report ${p.id} marked as Found & Closed.` });
+            }
+          });
+        }
+
         detailsModal.classList.add("open");
         document.body.style.overflow = "hidden";
       }
@@ -254,24 +283,56 @@
         handleDemoSubmit(form, {
           loadingText: "Submitting…",
           onValid: () => {
+            const nameVal = (document.getElementById("mpName") ? document.getElementById("mpName").value : "").trim();
+            const ageVal = Number(document.getElementById("mpAge") ? document.getElementById("mpAge").value : 0);
+            const genderVal = document.getElementById("mpGender") ? document.getElementById("mpGender").value : "Other";
+            const lastVal = (document.getElementById("mpLast") ? document.getElementById("mpLast").value : "").trim();
+            const lastAtInput = document.getElementById("mpLastAt") ? document.getElementById("mpLastAt").value : "";
+            const descVal = (document.getElementById("mpDesc") ? document.getElementById("mpDesc").value : "").trim();
+
+            let parsedDate;
+            try {
+              parsedDate = lastAtInput ? new Date(lastAtInput).toISOString() : new Date().toISOString();
+            } catch (e) {
+              parsedDate = new Date().toISOString();
+            }
+
+            let photoUrl = null;
+            if (photoPreview && typeof photoPreview.getPreviews === "function") {
+              const previews = photoPreview.getPreviews();
+              if (previews && previews[0] && previews[0].dataUrl) {
+                photoUrl = previews[0].dataUrl;
+              }
+            }
+
             const record = window.ResQStore.add("missingPersons", {
-              name: document.getElementById("mpName").value,
-              age: Number(document.getElementById("mpAge").value),
-              gender: document.getElementById("mpGender").value,
-              lastSeen: document.getElementById("mpLast").value,
-              lastSeenAt: new Date(document.getElementById("mpLastAt").value).toISOString(),
-              description: document.getElementById("mpDesc").value,
+              name: nameVal,
+              age: ageVal,
+              gender: genderVal,
+              lastSeen: lastVal,
+              lastSeenAt: parsedDate,
+              description: descVal,
               status: "reported",
-              photo: photoPreview && photoPreview.getPreviews()[0] ? photoPreview.getPreviews()[0].dataUrl : null
+              photo: photoUrl
             });
+
             form.reset();
-            if (photoPreview) photoPreview.clear();
-            document.getElementById("missingModal").classList.remove("open");
+            if (photoPreview && typeof photoPreview.clear === "function") {
+              try { photoPreview.clear(); } catch (e) {}
+            }
+            const modalEl = document.getElementById("missingModal");
+            if (modalEl) modalEl.classList.remove("open");
             document.body.style.overflow = "";
             render();
-            showToast({ type: "success", message: `Missing person report ${record.id} submitted.` });
+            if (typeof showToast === "function") {
+              showToast({ type: "success", message: `Missing person report ${record.id} submitted.` });
+            }
           }
         });
+      }
+
+      if (window.ResQStore && typeof window.ResQStore.subscribe === "function") {
+        window.ResQStore.subscribe("missingPersons", render);
       }
 
       render();
